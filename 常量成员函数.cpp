@@ -7,6 +7,7 @@ class A
 
 public:
     void f()
+
     {
         cout << "你不是const" << endl;
     }
