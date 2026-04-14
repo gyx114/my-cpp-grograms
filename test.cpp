@@ -13,7 +13,10 @@ ostream &operator<<(ostream &os, const vector<T> &vec)
 
 int main()
 {
-    vector<int> v1 = {1, 2, 3};
-    v1.insert(v1.begin() + 3, 6);
-    cout << v1 << endl;
+    vector<int> v1 = {1, 2, 3, 4};
+
+    auto it = v1.begin() + 3;
+    v1.insert(it, 8);
+    cout << *it << endl;
+    cout << *(it - 1) << endl;
 }
