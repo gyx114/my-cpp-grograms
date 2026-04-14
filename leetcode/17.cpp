@@ -6,16 +6,6 @@ public:
     vector<string> plus(string &s1, string &s2)
     {
         vector<string> tmp;
-        if (s2.length() == 0)
-        {
-            for (int i = 0; i < s1.length(); i++)
-            {
-                string gyx;
-                gyx.push_back(s1[i]);
-                tmp.push_back(gyx);
-            }
-            return tmp;
-        }
 
         for (int j = 0; j < s2.length(); j++)
         {
@@ -41,19 +31,12 @@ public:
         mp.emplace('7', "pqrs");
         mp.emplace('8', "tuv");
         mp.emplace('9', "wxyz");
-        vector<string> tmp;
-        vector<string> ans;
-        string kong;
 
-        ans = plus(mp[digits[0]], kong);
-        if (n == 1)
+        vector<string> ans = {""};
+
+        for (int i = 0; i <= n - 1; i++)
         {
-            return ans;
-        }
-        tmp = ans;
-        for (int i = 1; i <= n - 1; i++)
-        {
-            tmp.clear();
+            vector<string> tmp;
             for (auto s : ans)
             {
                 auto vs = plus(s, mp[digits[i]]);
