@@ -14,9 +14,6 @@ ostream &operator<<(ostream &os, const vector<T> &vec)
 int main()
 {
     vector<int> v1 = {1, 2, 3, 4};
-
-    auto it = v1.begin() + 3;
-    v1.insert(it, 8);
-    cout << *it << endl;
-    cout << *(it - 1) << endl;
+    list<int> ls = {1, 2, 3, 4};
+    auto it = ls.begin();
 }
