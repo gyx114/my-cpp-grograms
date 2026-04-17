@@ -1,19 +1,18 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-template <class T>
-ostream &operator<<(ostream &os, const vector<T> &vec)
+int reverse(int n)
 {
-    for (const auto &i : vec)
+    int ret = 0;
+    while (n != 0)
     {
-        os << i << " ";
+        ret = ret * 10 + n % 10;
+        n /= 10;
     }
-    return os;
+    return ret;
 }
 
 int main()
 {
-    vector<int> v1 = {1, 2, 3, 4};
-    list<int> ls = {1, 2, 3, 4};
-    auto it = ls.begin();
+    cout << reverse(120) << endl;
 }
