@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-
+#include <iomanip>
 using namespace std;
 
 int reverse(int n)
@@ -12,7 +12,7 @@ int reverse(int n)
     }
     return ret;
 }
-
+setw(10);
 class students
 {
 
@@ -68,7 +68,6 @@ int main()
     mp.insert(make_pair(5, 10));
     mp.emplace(78, 91);
 
-
     for (auto i : mp)
     {
         cout << i.first << " " << i.second << endl;
@@ -76,4 +75,6 @@ int main()
     students stud = {1, 10};
     f(students(1, 2));
     f({1, 2});
+
+    cout << "gyx" << ios::left << endl;
 }
