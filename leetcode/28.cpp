@@ -14,6 +14,7 @@ public:
         //     return dest - haystack.c_str();
         // }
         // return -1;
+
         return haystack.find(needle);
     }
 };
