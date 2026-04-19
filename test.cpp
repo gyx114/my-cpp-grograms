@@ -1,11 +1,11 @@
 #include <bits/stdc++.h>
 #include <iomanip>
+
 using namespace std;
 
 int reverse(int n)
 {
     int ret = 0;
-    
 
     while (n != 0)
     {
@@ -14,7 +14,7 @@ int reverse(int n)
     }
     return ret;
 }
-setw(10);
+
 class students
 {
 
@@ -78,5 +78,21 @@ int main()
     f(students(1, 2));
     f({1, 2});
 
-    cout << "gyx" << ios::left << endl;
+    cout << "gyx " << ios::left << endl;
+
+    set<int, less<int>> st;
+    st.insert(3);
+    auto p = st.insert(3);
+    cout << p.second << endl;
+
+    priority_queue<int, vector<int>, greater<int>> pq;
+
+    unordered_map<int, string> unmp;
+    unordered_set<int> unst = {2, 1, 3, 7, 8, 9};
+    cout << "---------------" << endl;
+    for (auto i : unst)
+    {
+        cout << i << " ";
+    }
+    cout << endl;
 }
