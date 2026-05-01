@@ -18,28 +18,30 @@ public:
 
     void op(TreeNode *root)
     {
-        if (!nodes.empty() && root->val <= nodes.back()->val)
+        if (bk && root->val <= bk->val)
         {
-            if (nodes.size() == 1 || nodes[nodes.size() - 2] <= nodes.back())
+            if (!l)
             {
-                l = nodes.back();
+                l = bk;
             }
             r = root;
         }
         else
         {
-            if (l && r && !nodes.empty() && nodes.back() == r && root->val > r->val)
+            if (l && r && bk && bk == r && root->val > r->val && before_bk != l)
             {
                 int tmp = l->val;
                 l->val = r->val;
                 r->val = tmp;
                 is_ok = 1;
-                return;
             }
+            return;
         }
     }
 
     vector<TreeNode *> nodes;
+    TreeNode *bk = nullptr;
+    TreeNode *before_bk = nullptr;
     TreeNode *l = nullptr;
     TreeNode *r = nullptr;
     int is_ok = 0;
@@ -53,23 +55,24 @@ public:
         {
             return;
         }
-        else if (!root->left && !root->right)
-        {
-            op(root);
-            nodes.push_back(root);
-        }
         else
         {
             inorder(root->left);
             op(root);
-            nodes.push_back(root);
+            before_bk = bk;
+            bk = root;
             inorder(root->right);
         }
     }
 
     void recoverTree(TreeNode *root)
     {
-
         inorder(root);
+        if (!is_ok)
+        {
+            int tmp = l->val;
+            l->val = r->val;
+            r->val = tmp;
+        }
     }
 };
