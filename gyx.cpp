@@ -7,7 +7,7 @@ void f()
 }
 int main()
 {
-
+    cout << "管宇轩" << endl;
     try
     {
         __throw_bad_alloc();
