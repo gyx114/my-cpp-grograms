@@ -26,29 +26,22 @@ public:
 class Solution
 {
 public:
-    unordered_map<int, Node *> val_to_node;
-    // 为了防止回到前面的节点，然后无限循环，需要visited来存已经走过的节点
-    // 在遍历neighbors时，如果节点在visited中，不应对其dfs
-    unordered_set<Node *> visited;
+    unordered_map<Node *, Node *> visited;
     void dfs(Node *node, Node *newnode)
     {
         for (auto n : node->neighbors)
         {
             Node *tmp;
-            if (val_to_node.count(n->val))
+            if (visited.count(n))
             {
-                tmp = val_to_node[n->val];
+                tmp = visited[n];
                 newnode->neighbors.push_back(tmp);
             }
             else
             {
                 tmp = new Node(n->val);
                 newnode->neighbors.push_back(tmp);
-                val_to_node[n->val] = tmp;
-            }
-            if (!visited.count(n))
-            {
-                visited.insert(n);
+                visited[n] = tmp;
                 dfs(n, tmp);
             }
         }
@@ -60,8 +53,7 @@ public:
             return nullptr;
         }
         Node *newnode = new Node(node->val);
-        val_to_node[node->val] = newnode;
-        visited.insert(node);
+        visited[node] = newnode;
         dfs(node, newnode);
         return newnode;
     }
