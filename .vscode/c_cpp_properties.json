@@ -3,6 +3,12 @@
         {
             "name": "Win32-MSYS2-CPP-EXACT",
             "includePath": [
+                "D:/msys2/mingw64/include/c++/15.2.0",
+                "D:/msys2/mingw64/include/c++/15.2.0/x86_64-w64-mingw32",
+                "D:/msys2/mingw64/include/c++/15.2.0/backward",
+                "D:/msys2/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include",
+                "D:/msys2/mingw64/include",
+                "D:/msys2/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include-fixed",
                 "${workspaceFolder}/**",
                 "D:/msys2/mingw64/include/c++/15.2.0/**",
                 "D:/msys2/mingw64/include/c++/15.2.0/x86_64-w64-mingw32/**",
@@ -27,13 +33,14 @@
             "browse": {
                 "path": [
                     "${workspaceFolder}",
-                    "D:/msys2/mingw64/include/c++/15.2.0",
-                    "D:/msys2/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include",
-                    "D:/msys2/mingw64/include",
-                    "D:/c_libs/SDL3/x86_64-w64-mingw32/include"
+                    "D:/msys2/mingw64/include/c++/15.2.0/**",
+                    "D:/msys2/mingw64/include/c++/15.2.0/x86_64-w64-mingw32/**",
+                    "D:/msys2/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/**",
+                    "D:/msys2/mingw64/include/**",
+                    "D:/c_libs/SDL3/x86_64-w64-mingw32/include/**"
                 ],
-                "limitSymbolsToIncludedHeaders": true,
-                "databaseFilename": ""
+                "limitSymbolsToIncludedHeaders": false,
+                "databaseFilename": "${workspaceFolder}/.vscode/.browse.VC.db"
             }
         }
     ],
