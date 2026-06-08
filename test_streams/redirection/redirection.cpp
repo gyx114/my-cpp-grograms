@@ -14,7 +14,8 @@ int main()
     }
     cout.rdbuf(p_cout_old); // 定向回来
     cout << "changed" << endl;
-    cin.clear();
+    // while循环后cin是eof状态，此时无法正常读取
+    cin.clear(); // 清除刚刚的eof状态
     cin >> word;
     cout << word << endl;
 
