@@ -4,25 +4,22 @@ using namespace std;
 class Solution
 {
 public:
-    string add(string s1, string s2)
+    string add(string &s1, string &s2)
     {
-        if (s1.size() < s2.size())
-        {
-            swap(s1, s2);
-        }
         int n1 = s1.size();
         int n2 = s2.size();
+        int n = max(n1, n2);
         string ans;
-        ans.resize(n1 + 1);
+        ans.resize(n + 1);
         int jinwei = 0;
         int remain = 0;
         int tmp = 0;
-        for (int i = 1; i <= n1; i++)
+        for (int i = 1; i <= n; i++)
         {
-            tmp = jinwei + s1[n1 - i] - '0' + (n2 - i < 0 ? 0 : s2[n2 - i] - '0');
+            tmp = jinwei + (n1 - i < 0 ? 0 : s1[n1 - i] - '0') + (n2 - i < 0 ? 0 : s2[n2 - i] - '0');
             remain = tmp % 10;
             jinwei = tmp / 10;
-            ans[n1 + 1 - i] = remain + '0';
+            ans[n + 1 - i] = remain + '0';
         }
         if (jinwei != 0)
         {
