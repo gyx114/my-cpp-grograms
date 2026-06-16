@@ -30,7 +30,7 @@ public:
         vector<int> leaves;
         for (int i = 0; i < n; i++)
         {
-            if (neighbors[i].size() == 1)
+            if (degrees[i] == 1)
             {
                 leaves.push_back(i);
             }
@@ -41,11 +41,9 @@ public:
         while (cnt < n - 2)
         {
             tmp.clear();
-            int sz = leaves.size();
-            for (int j = 0; j < sz; j++)
+            for (auto x : leaves) // 保证一次剥完整一圈
             {
                 cnt++;
-                auto x = leaves[j];
                 for (auto nb : neighbors[x])
                 {
                     degrees[nb]--;
