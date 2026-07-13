@@ -21,7 +21,7 @@ public:
         int cnt_r = cnt_pairs(mid + 1, r, pre, lower, upper);
 
         int cnt_mid = 0;
-        // 找跨越中点的,此时pre数组左右半边都有序，考虑使用双指针,而不是二分查找
+        // 找跨越中点的,此时pre数组左右半边都有序，考虑使用双指针,比lower_bound和upper_bound快一点
         int l_l = l;
         int l_r = l;
         for (int i = mid + 1; i <= r; i++)
