@@ -1,8 +1,8 @@
 #include <iostream>
-#include <vector>
+#include "my_vector.hpp"
 using namespace std;
 
-void dfs(vector<int> &vec, int val /*原序列价值*/, int cnt /*序列中已有几个*/, int idx, int &ans)
+void dfs(my_vector<int> &vec, int val /*原序列价值*/, int cnt /*序列中已有几个*/, int idx, int &ans)
 {
     if (idx == vec.size())
     {
@@ -24,7 +24,7 @@ int main()
 {
     int n;
     cin >> n;
-    vector<int> vec(n);
+    my_vector<int> vec(n);
     for (int i = 0; i < n; i++)
     {
         cin >> vec[i];
