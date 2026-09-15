@@ -1,8 +1,8 @@
 #include <iostream>
-#include <vector>
+#include "my_vector.hpp"
 using namespace std;
 
-void back_track(vector<int> &vec, vector<bool> &is_chosen, int cnt, int val, int &ans)
+void back_track(my_vector<int> &vec, my_vector<bool> &is_chosen, int cnt, int val, int &ans)
 {
     if (cnt == vec.size())
     {
@@ -14,14 +14,10 @@ void back_track(vector<int> &vec, vector<bool> &is_chosen, int cnt, int val, int
     {
         if (!is_chosen[i])
         {
-            // 选
             is_chosen[i] = true;
-            int cur_val = val + (cnt + 1) ^ vec[i];
+            int cur_val = val + ((cnt + 1) ^ vec[i]); // 注意优先级。。。。。
             back_track(vec, is_chosen, cnt + 1, cur_val, ans);
             is_chosen[i] = false;
-
-            // 不选
-            back_track(vec, is_chosen, cnt, val, ans);
         }
     }
 }
@@ -30,13 +26,13 @@ int main()
 {
     int n;
     cin >> n;
-    vector<int> vec(n);
+    my_vector<int> vec(n);
     for (int i = 0; i < n; i++)
     {
         cin >> vec[i];
     }
-    int ans;
-    vector<bool> is_chosen(n);
+    int ans = 0;
+    my_vector<bool> is_chosen(n, false);
     back_track(vec, is_chosen, 0, 0, ans);
     cout << ans << endl;
 }
