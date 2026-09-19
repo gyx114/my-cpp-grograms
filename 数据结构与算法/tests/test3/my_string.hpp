@@ -175,7 +175,7 @@ public:
     friend bool operator==(const my_string &l, const char *r);
 };
 
-std::istream &operator>>(std::istream &is, my_string &tar)
+inline std::istream &operator>>(std::istream &is, my_string &tar)
 {
     char tmp[1024];
     is >> tmp;

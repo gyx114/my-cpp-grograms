@@ -58,7 +58,7 @@ public:
             return tmp;
         }
 
-        const_iterator operator+(int n)
+        const_iterator operator+(int n) const
         {
             return const_iterator(ptr + n);
         }
@@ -82,7 +82,7 @@ public:
             return tmp;
         }
 
-        const_iterator operator-(int n)
+        const_iterator operator-(int n) const
         {
             return const_iterator(ptr - n);
         }
@@ -98,32 +98,32 @@ public:
             return *this;
         }
 
-        bool operator==(const const_iterator &other)
+        bool operator==(const const_iterator &other) const
         {
             return this->ptr == other.ptr;
         }
 
-        bool operator!=(const const_iterator &other)
+        bool operator!=(const const_iterator &other) const
         {
             return this->ptr != other.ptr;
         }
 
-        bool operator<(const const_iterator &other)
+        bool operator<(const const_iterator &other) const
         {
             return this->ptr < other.ptr;
         }
 
-        bool operator>(const const_iterator &other)
+        bool operator>(const const_iterator &other) const
         {
             return this->ptr > other.ptr;
         }
 
-        bool operator<=(const const_iterator &other)
+        bool operator<=(const const_iterator &other) const
         {
             return this->ptr <= other.ptr;
         }
 
-        bool operator>=(const const_iterator &other)
+        bool operator>=(const const_iterator &other) const
         {
             return this->ptr >= other.ptr;
         }
@@ -178,7 +178,7 @@ public:
             return tmp;
         }
 
-        iterator operator+(int n)
+        iterator operator+(int n) const
         {
             return iterator(ptr + n);
         }
@@ -202,7 +202,7 @@ public:
             return tmp;
         }
 
-        iterator operator-(int n)
+        iterator operator-(int n) const
         {
             return iterator(ptr - n);
         }
@@ -218,32 +218,32 @@ public:
             return *this;
         }
 
-        bool operator==(const iterator &other)
+        bool operator==(const iterator &other) const
         {
             return this->ptr == other.ptr;
         }
 
-        bool operator!=(const iterator &other)
+        bool operator!=(const iterator &other) const
         {
             return this->ptr != other.ptr;
         }
 
-        bool operator<(const iterator &other)
+        bool operator<(const iterator &other) const
         {
             return this->ptr < other.ptr;
         }
 
-        bool operator>(const iterator &other)
+        bool operator>(const iterator &other) const
         {
             return this->ptr > other.ptr;
         }
 
-        bool operator<=(const iterator &other)
+        bool operator<=(const iterator &other) const
         {
             return this->ptr <= other.ptr;
         }
 
-        bool operator>=(const iterator &other)
+        bool operator>=(const iterator &other) const
         {
             return this->ptr >= other.ptr;
         }
@@ -422,6 +422,21 @@ public:
             this->swap(tmp);
         }
         return *this;
+    }
+
+    my_vector &operator=(my_vector &&that) noexcept
+    {
+        if (this != &that)
+        {
+            ::operator delete(arr_);
+            arr_ = that.arr_;
+            size_ = that.size_;
+            capacity_ = that.capacity_;
+
+            that.arr_ = nullptr;
+            that.size_ = 0;
+            that.capacity_ = 0;
+        }
     }
 
     iterator begin()
