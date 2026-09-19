@@ -431,7 +431,7 @@ public:
 
     iterator end()
     {
-        return iterator(size == 0 ? arr : (arr_ + size_));
+        return iterator(size_ == 0 ? arr_ : (arr_ + size_));
     }
 
     const_iterator begin() const
@@ -471,7 +471,7 @@ public:
             *(it - 1) = std::move_if_noexcept(*(it));
         }
         // 应当析构原来的最后一个元素
-        delete (arr_ + size_);
+        (arr_ + size_)->~T();
 
         size_--;
         return pos;
@@ -491,7 +491,7 @@ public:
         // 析构后n个元素
         for (int i = 0; i < n; i++)
         {
-            delete (arr_ + size_ - 1 - i);
+            (arr_ + size_ - 1 - i)->~T();
         }
         size_ -= n;
         return first;
