@@ -317,7 +317,7 @@ public:
             new (arr_ + i) T();
         }
     }
-    my_vector(int sz, const T &val) : size_(sz)
+    my_vector(int sz, const T &val) : size_(sz), capacity_(sz)
     {
         if (sz < 0)
         {
@@ -431,7 +431,7 @@ public:
 
     iterator end()
     {
-        return iterator(arr_ + size_);
+        return iterator(size == 0 ? arr : (arr_ + size_));
     }
 
     const_iterator begin() const
@@ -468,8 +468,11 @@ public:
     {
         for (auto it = pos + 1; it != end(); it++)
         {
-            *(it - 1) = *(it);
+            *(it - 1) = std::move_if_noexcept(*(it));
         }
+        // 应当析构原来的最后一个元素
+        delete (arr_ + size_);
+
         size_--;
         return pos;
     }
@@ -483,7 +486,12 @@ public:
         int n = last - first;
         for (auto it = last; it != end(); it++)
         {
-            *(it - n) = *it;
+            *(it - n) = std::move_if_noexcept(*it);
+        }
+        // 析构后n个元素
+        for (int i = 0; i < n; i++)
+        {
+            delete (arr_ + size_ - 1 - i);
         }
         size_ -= n;
         return first;
@@ -513,7 +521,7 @@ public:
                 *it = std::move(*(it - 1));
             }
             *pos = val;
-            size++;
+            size_++;
         }
         return pos;
     }

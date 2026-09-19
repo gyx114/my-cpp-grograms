@@ -88,19 +88,25 @@ public:
 
     my_string &operator=(const my_string &other)
     {
-        delete[] str_;
-        len_ = other.len_;
-        str_ = new char[len_ + 1];
-        my_strcpy(str_, other.str_);
+        if (this != &other)
+        {
+            delete[] str_;
+            len_ = other.len_;
+            str_ = new char[len_ + 1];
+            my_strcpy(str_, other.str_);
+        }
         return *this;
     }
     my_string &operator=(my_string &&other) noexcept
     {
-        delete[] str_;
-        str_ = other.str_;
-        len_ = other.len_;
-        other.len_ = 0;
-        other.str_ = nullptr;
+        if (this != &other)
+        {
+            delete[] str_;
+            str_ = other.str_;
+            len_ = other.len_;
+            other.len_ = 0;
+            other.str_ = nullptr;
+        }
         return *this;
     }
     my_string &operator=(const char *src)

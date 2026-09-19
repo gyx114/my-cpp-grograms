@@ -35,6 +35,7 @@ public:
             if (table[i].get_name() == name)
             {
                 table.erase(table.begin() + i);
+                break;
             }
         }
     }
@@ -43,11 +44,12 @@ public:
     {
 
         auto it = table.begin();
-        for (; it->get_name() != name && it != table.end(); it++)
+        for (; it != table.end() && it->get_name() != name; it++)
         {
         }
         if (it == table.end())
         {
+            std::cout << "未找到对应联系人！" << std::endl;
             return;
         }
         switch (op)
