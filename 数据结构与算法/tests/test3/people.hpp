@@ -77,7 +77,7 @@ public:
     friend std::istream &operator>>(std::istream &is, people &tar);
 };
 
-std::istream &operator>>(std::istream &is, people &tar)
+inline std::istream &operator>>(std::istream &is, people &tar)
 {
     is >> tar.name >> tar.phone >> tar.clss >> tar.dorm;
     return is;

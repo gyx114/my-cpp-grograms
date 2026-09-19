@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <iostream>
 
-int my_strlen(const char *str_)
+inline int my_strlen(const char *str_)
 {
     if (str_ == nullptr)
     {
@@ -17,11 +17,11 @@ int my_strlen(const char *str_)
     }
     return len;
 }
-void my_strcpy(char *dest, const char *src)
+inline void my_strcpy(char *dest, const char *src)
 {
     if (!src || !dest)
     {
-        std::logic_error("传入了空源或目的!");
+        throw std::logic_error("传入了空源或目的!");
     }
     else
     {
@@ -33,7 +33,7 @@ void my_strcpy(char *dest, const char *src)
         dest[i] = '\0';
     }
 }
-int my_strcmp(const char *l, const char *r)
+inline int my_strcmp(const char *l, const char *r)
 {
     if (l == nullptr || r == nullptr)
     {
@@ -120,7 +120,7 @@ public:
         }
         else
         {
-            len_ = 1;
+            len_ = 0;
             str_ = new char[1];
             str_[0] = '\0';
         }
@@ -183,20 +183,20 @@ std::istream &operator>>(std::istream &is, my_string &tar)
     return is;
 }
 
-bool operator==(const char *l, const my_string &r)
+inline bool operator==(const char *l, const my_string &r)
 {
     return !my_strcmp(l, r.str_);
 }
-bool operator==(const my_string &l, const char *r)
+inline bool operator==(const my_string &l, const char *r)
 {
     return !my_strcmp(l.str_, r);
 }
 
-bool operator!=(const char *l, const my_string &r)
+inline bool operator!=(const char *l, const my_string &r)
 {
     return !operator==(l, r);
 }
-bool operator!=(const my_string &l, const char *r)
+inline bool operator!=(const my_string &l, const char *r)
 {
     return !operator==(l, r);
 }

@@ -441,7 +441,7 @@ public:
 
     const_iterator end() const
     {
-        return const_iterator(arr_ + size_);
+        return const_iterator(size_ == 0 ? arr_ : (arr_ + size_));
     }
 
     T &front()
@@ -471,7 +471,7 @@ public:
             *(it - 1) = std::move_if_noexcept(*(it));
         }
         // 应当析构原来的最后一个元素
-        (arr_ + size_)->~T();
+        (arr_ + size_ - 1)->~T();
 
         size_--;
         return pos;
@@ -499,7 +499,7 @@ public:
 
     iterator insert(iterator pos, const T &val)
     {
-        int idx = pos - begin(); // 扩容后pos会失效，因此需要先记录下标
+        int idx = (pos == end() ? size_ : pos - begin()); // 扩容后pos会失效，因此需要先记录下标
         if (size_ == capacity_)
         {
             reallocate(capacity_ == 0 ? 1 : size_ * 2);
