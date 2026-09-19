@@ -428,6 +428,10 @@ public:
     {
         if (this != &that)
         {
+            for (int i = 0; i < size_; i++)
+            {
+                (arr_ + i)->~T();
+            }
             ::operator delete(arr_);
             arr_ = that.arr_;
             size_ = that.size_;
@@ -437,6 +441,7 @@ public:
             that.size_ = 0;
             that.capacity_ = 0;
         }
+        return *this;
     }
 
     iterator begin()
