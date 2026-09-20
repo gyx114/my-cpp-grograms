@@ -12,7 +12,7 @@ private:
     int dorm;        // 宿舍号
 
 public:
-    people() {}
+    people() : name(), phone(), clss(0), dorm(0) {}
     people(my_string name_, my_string phone_, int clss_, int dorm_) : name(name_), phone(phone_), clss(clss_), dorm(dorm_) {}
     people(people &&other) noexcept : name(std::move(other.name)), phone(std::move(other.phone)), clss(other.clss), dorm(other.dorm) {}
     people(const people &other) : name(other.name), phone(other.phone), clss(other.clss), dorm(other.dorm) {}

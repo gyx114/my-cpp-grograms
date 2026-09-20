@@ -13,6 +13,27 @@ private:
     int size_ = 0;
     int capacity_ = 0;
 
+    void reallocate(int n) // 扩容
+    {
+        T *new_arr = static_cast<T *>(::operator new(n * sizeof(T))); // 分配内存而不初始化
+        // 类型必须是T*，方便指针偏移，对单个位置赋值
+
+        // 移动或者拷贝
+        for (int i = 0; i < size_; i++)
+        {
+            new (new_arr + i) T(std::move_if_noexcept(arr_[i]));
+        }
+
+        // 销毁旧元素
+        for (int i = 0; i < size_; i++)
+        {
+            arr_[i].~T(); // 对每个对象析构，让内存变为裸内存
+        }
+        ::operator delete(arr_);
+        arr_ = new_arr;
+        capacity_ = n;
+    }
+
 public:
     // const迭代器
     class const_iterator
@@ -271,27 +292,6 @@ public:
             return;
         }
         reallocate(n);
-    }
-
-    void reallocate(int n) // 扩容
-    {
-        T *new_arr = static_cast<T *>(::operator new(n * sizeof(T))); // 分配内存而不初始化
-        // 类型必须是T*，方便指针偏移，对单个位置赋值
-
-        // 移动或者拷贝
-        for (int i = 0; i < size_; i++)
-        {
-            new (new_arr + i) T(std::move_if_noexcept(arr_[i]));
-        }
-
-        // 销毁旧元素
-        for (int i = 0; i < size_; i++)
-        {
-            arr_[i].~T(); // 对每个对象析构，让内存变为裸内存
-        }
-        ::operator delete(arr_);
-        arr_ = new_arr;
-        capacity_ = n;
     }
 
     void clear()
