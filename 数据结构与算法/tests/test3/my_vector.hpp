@@ -13,16 +13,48 @@ private:
     int size_ = 0;
     int capacity_ = 0;
 
+    // 清理器
+    // 将堆上分配的内存交给一个栈上的清理器
+    // 如果抛异常，析构清理器时会顺带析构元素+释放内存
+    struct construction_guard
+    {
+        T *data;
+        int count;
+
+        construction_guard(T *data_, int count_) : data(data_), count(count_) {}
+        ~construction_guard()
+        {
+            for (int i = 0; i < count; i++)
+            {
+                (data + i)->~T(); // 逐个析构
+            }
+            ::operator delete(data); // 释放内存
+        }
+
+        void release() // 取消对内存的管理
+        {
+            data = nullptr;
+            count = 0;
+            // 放弃资源所有权，避免construction_guard析构时再把正确的data给释放了
+        }
+    };
+
     void reallocate(int n) // 扩容
     {
         T *new_arr = static_cast<T *>(::operator new(n * sizeof(T))); // 分配内存而不初始化
         // 类型必须是T*，方便指针偏移，对单个位置赋值
 
+        construction_guard guard(new_arr, 0);
+
         // 移动或者拷贝
         for (int i = 0; i < size_; i++)
         {
             new (new_arr + i) T(std::move_if_noexcept(arr_[i]));
+            guard.count++;
         }
+
+        // 全构造成功,安全了,release
+        guard.release();
 
         // 销毁旧元素
         for (int i = 0; i < size_; i++)
@@ -311,11 +343,14 @@ public:
             throw std::logic_error("size不能为负!");
         }
         arr_ = static_cast<T *>(::operator new(sz * sizeof(T)));
+        construction_guard guard(arr_, 0);
         for (int i = 0; i < sz; i++)
         {
             // 不分配内存，只在指定位置构造
             new (arr_ + i) T();
+            guard.count++;
         }
+        guard.release();
     }
     my_vector(int sz, const T &val) : size_(sz), capacity_(sz)
     {
@@ -324,19 +359,25 @@ public:
             throw std::logic_error("size不能为负!");
         }
         arr_ = static_cast<T *>(::operator new(sz * sizeof(T)));
+        construction_guard guard(arr_, 0);
         for (int i = 0; i < sz; i++)
         {
             // 不分配内存，只在指定位置构造
             new (arr_ + i) T(val);
+            guard.count++;
         }
+        guard.release();
     }
     my_vector(const my_vector &other)
     {
         reserve(other.capacity_);
+        construction_guard guard(arr_, 0);
         for (int i = 0; i < other.size_; i++)
         {
             new (arr_ + i) T(other.arr_[i]);
+            guard.count++;
         }
+        guard.release();
         size_ = other.size_;
     }
     my_vector(my_vector &&other) noexcept : arr_(other.arr_), size_(other.size_), capacity_(other.capacity_)
