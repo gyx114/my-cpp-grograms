@@ -1,32 +1,7 @@
 #ifndef SORTS_HPP
 #define SORTS_HPP
 
-// 去引用
-template <typename T>
-struct RemoveRef
-{
-    using type = T;
-};
-
-template <typename T>
-struct RemoveRef<T &>
-{
-    using type = T;
-};
-
-template <typename T>
-struct RemoveRef<T &&>
-{
-    using type = T;
-};
-
-template <typename T>
-void my_swap(T &a, T &b)
-{
-    T tmp = a;
-    a = b;
-    b = tmp;
-}
+#include "my_utils.hpp"
 
 class sorter // 排序类，提供名次排序、及时终止的选择排序、及时终止的冒泡排序、插入排序操作
 {

@@ -203,17 +203,12 @@ public:
             return *this;
         }
 
-        T &operator*()
+        T &operator*() const
         {
             return *ptr;
         }
 
-        const T &operator*() const
-        {
-            return *ptr;
-        }
-
-        T *operator->()
+        T *operator->() const
         {
             return ptr;
         }
@@ -307,15 +302,11 @@ public:
         }
     };
 
-    int size() const
-    {
-        return size_;
-    }
+    int size() const { return size_; }
 
-    int capacity() const
-    {
-        return capacity_;
-    }
+    bool empty() const { return size_ == 0; }
+
+    int capacity() const { return capacity_; }
 
     void reserve(int n)
     {
@@ -485,25 +476,17 @@ public:
         return *this;
     }
 
-    iterator begin()
-    {
-        return iterator(arr_);
-    }
+    iterator begin() { return iterator(arr_); }
 
-    iterator end()
-    {
-        return iterator(size_ == 0 ? arr_ : (arr_ + size_));
-    }
+    iterator end() { return iterator(size_ == 0 ? arr_ : (arr_ + size_)); }
 
-    const_iterator begin() const
-    {
-        return const_iterator(arr_);
-    }
+    const_iterator begin() const { return const_iterator(arr_); }
 
-    const_iterator end() const
-    {
-        return const_iterator(size_ == 0 ? arr_ : (arr_ + size_));
-    }
+    const_iterator end() const { return const_iterator(size_ == 0 ? arr_ : (arr_ + size_)); }
+
+    const_iterator cbegin() const { return begin(); }
+
+    const_iterator cend() const { return end(); }
 
     T &front()
     {
