@@ -1,5 +1,6 @@
 #include "../my_stl/my_list.hpp"
 #include <iostream>
+#include "calc_xor_sum.hpp"
 
 #define INSERT 1
 #define DELETE 2
@@ -67,14 +68,7 @@ void one_operation(my_list<int> &lst)
 
     case OUTPUT:
     {
-        int ans = 0;
-        my_list<int>::iterator it = lst.begin();
-        for (int i = 0; i < lst.size(); i++)
-        {
-            ans += (i ^ *it);
-            it++;
-        }
-        std::cout << ans << std::endl;
+        calc_xor_sum(lst);
         break;
     }
 

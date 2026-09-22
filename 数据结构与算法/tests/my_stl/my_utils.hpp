@@ -27,4 +27,24 @@ void my_swap(T &a, T &b)
     b = tmp;
 }
 
+template <typename T>
+class my_less
+{
+public:
+    bool operator()(const T &a, const T &b)
+    {
+        return a < b;
+    }
+};
+
+template <typename T>
+class my_greater
+{
+public:
+    bool operator()(const T &a, const T &b)
+    {
+        return a > b;
+    }
+};
+
 #endif
