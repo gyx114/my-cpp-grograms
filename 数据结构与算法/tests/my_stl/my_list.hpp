@@ -23,7 +23,7 @@ struct node : public base_node
     node(const T &data, base_node *next = nullptr, base_node *prev = nullptr) : base_node(next, prev), data_(data) {}
     node(T &&data, base_node *next = nullptr, base_node *prev = nullptr) : base_node(next, prev), data_(std::move(data)) {}
 
-    virtual ~node() {}
+    ~node() {}
 };
 
 template <typename T>
@@ -38,15 +38,17 @@ public:
     {
     private:
         base_node *pnode_;
+        friend class my_list;
 
     public:
-        explicit iterator(const base_node *pnode) : pnode_(pnode) {}
+        explicit iterator(base_node *pnode) : pnode_(pnode) {}
         iterator(const iterator &other) : pnode_(other.pnode_) {}
         ~iterator() = default;
 
         iterator &operator=(const iterator &other)
         {
             pnode_ = other.pnode_;
+            return *this;
         }
 
         T &operator*() const
@@ -62,7 +64,7 @@ public:
         iterator &operator++()
         {
             pnode_ = pnode_->next_;
-            return pnode_;
+            return *this;
         }
 
         iterator operator++(int)
@@ -74,7 +76,7 @@ public:
         iterator &operator--()
         {
             pnode_ = pnode_->prev_;
-            return pnode_;
+            return *this;
         }
 
         iterator operator--(int)
@@ -84,11 +86,11 @@ public:
             return tmp;
         }
 
-        bool operator==(const iterator &other)
+        bool operator==(const iterator &other) const
         {
             return pnode_ == other.pnode_;
         }
-        bool operator!=(const iterator &other)
+        bool operator!=(const iterator &other) const
         {
             return pnode_ != other.pnode_;
         }
@@ -97,7 +99,8 @@ public:
     class const_iterator // 双向const迭代器
     {
     private:
-        base_node *pnode_;
+        const base_node *pnode_;
+        friend class my_list;
 
     public:
         explicit const_iterator(const base_node *pnode) : pnode_(pnode) {}
@@ -107,11 +110,12 @@ public:
         const_iterator &operator=(const const_iterator &other)
         {
             pnode_ = other.pnode_;
+            return *this;
         }
 
         const T &operator*() const
         {
-            return static_cast<node<T> *>(pnode_)->data_;
+            return static_cast<const node<T> *>(pnode_)->data_;
         }
 
         const T *operator->() const
@@ -122,7 +126,7 @@ public:
         const_iterator &operator++()
         {
             pnode_ = pnode_->next_;
-            return pnode_;
+            return *this;
         }
 
         const_iterator operator++(int)
@@ -134,7 +138,7 @@ public:
         const_iterator &operator--()
         {
             pnode_ = pnode_->prev_;
-            return pnode_;
+            return *this;
         }
 
         const_iterator operator--(int)
@@ -144,18 +148,18 @@ public:
             return tmp;
         }
 
-        bool operator==(const const_iterator &other)
+        bool operator==(const const_iterator &other) const
         {
             return pnode_ == other.pnode_;
         }
-        bool operator!=(const const_iterator &other)
+        bool operator!=(const const_iterator &other) const
         {
             return pnode_ != other.pnode_;
         }
     };
 
     /*---构造/析构---*/
-    my_list() : size_(0), dummy(&dummy, &dummy) {}
+    my_list() : dummy(&dummy, &dummy), size_(0) {}
     ~my_list() { clear(); }
     my_list(const my_list &other) = delete;
     my_list &operator=(const my_list &other) = delete;
@@ -211,7 +215,14 @@ public:
     iterator erase(const T &val)
     {
         iterator it = search(val);
+        if (it == end())
+        {
+            return it;
+        }
+        iterator it_next = it;
+        it_next++;
         erase(it);
+        return it_next;
     }
 
     /*---清空---*/
@@ -235,8 +246,20 @@ public:
     void push_front(const T &val) { insert(begin(), val); }
     void push_front(T &&val) { insert(begin(), std::move(val)); }
 
-    void pop_back() { erase(iterator(dummy.prev_)); }
-    void pop_front() { erase(iterator(dummy.next_)); }
+    void pop_back()
+    {
+        if (size_)
+        {
+            erase(iterator(dummy.prev_));
+        }
+    }
+    void pop_front()
+    {
+        if (size_)
+        {
+            erase(iterator(dummy.next_));
+        }
+    }
 
     T &front() { return *begin(); }
     T &back() { return *(iterator(dummy.prev_)); }
@@ -266,7 +289,7 @@ public:
     /*---原地逆置---*/
     void reverse()
     {
-        base_node *p = *end();
+        base_node *p = &dummy;
         do
         {
             my_swap(p->prev_, p->next_);
@@ -275,7 +298,8 @@ public:
     }
 
     /*---输出链表---*/
-    friend std::ostream &operator<<(std::ostream &os, const my_list &lst);
+    template <typename U>
+    friend std::ostream &operator<<(std::ostream &os, const my_list<U> &lst);
 };
 
 template <typename T>
@@ -285,8 +309,10 @@ inline std::ostream &operator<<(std::ostream &os, const my_list<T> &lst)
     while (it != lst.end())
     {
         os << *it << ' ';
+        it++;
     }
     os << std::endl;
+    return os;
 }
 
 #endif
