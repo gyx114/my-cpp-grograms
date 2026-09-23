@@ -5,6 +5,38 @@
 #include "../my_stl/sorts.hpp"
 #include "calc_xor_sum.hpp"
 
+void merge_and_calc_xor_sum(const my_list<int> &lst1, const my_list<int> &lst2)
+{
+    my_list<int> merged;
+    auto it1 = lst1.begin();
+    auto it2 = lst2.begin();
+    while (it1 != lst1.end() && it2 != lst2.end())
+    {
+        if (*it1 < *it2)
+        {
+            merged.push_back(*it1);
+            it1++;
+        }
+        else
+        {
+            merged.push_back(*it2);
+            it2++;
+        }
+    }
+    while (it1 != lst1.end())
+    {
+        merged.push_back(*it1);
+        it1++;
+    }
+    while (it2 != lst2.end())
+    {
+        merged.push_back(*it2);
+        it2++;
+    }
+
+    calc_xor_sum(merged);
+}
+
 void solution_1()
 { // 先排序再建表
     int n, m;
@@ -42,6 +74,8 @@ void solution_1()
         lst2.push_back(i);
     }
     calc_xor_sum(lst2);
+
+    merge_and_calc_xor_sum(lst1, lst2);
 }
 
 void solution_2()
@@ -57,8 +91,6 @@ void solution_2()
         std::cin >> val;
         lst1.push_back(val);
     }
-    lst1.sort();
-    std::cout << lst1 << std::endl;
 
     for (int i = 0; i < m; i++)
     {
@@ -66,9 +98,18 @@ void solution_2()
         std::cin >> val;
         lst2.push_back(val);
     }
+
+    lst1.sort();
+    calc_xor_sum(lst1);
+
+    lst2.sort();
+    calc_xor_sum(lst2);
+
+    merge_and_calc_xor_sum(lst1, lst2);
 }
 
 int main()
 {
+    solution_1();
     solution_2();
 }
