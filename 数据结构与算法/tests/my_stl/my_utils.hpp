@@ -31,7 +31,7 @@ template <typename T>
 class my_less
 {
 public:
-    bool operator()(const T &a, const T &b)
+    bool operator()(const T &a, const T &b) const
     {
         return a < b;
     }

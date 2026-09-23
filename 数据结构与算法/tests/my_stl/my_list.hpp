@@ -198,6 +198,8 @@ public:
     public:
         explicit const_iterator(const base_node *pnode) : pnode_(pnode) {}
         const_iterator(const const_iterator &other) : pnode_(other.pnode_) {}
+        const_iterator(const iterator &other) : pnode_(other.pnode_) {}
+
         ~const_iterator() = default;
 
         const_iterator &operator=(const const_iterator &other)
