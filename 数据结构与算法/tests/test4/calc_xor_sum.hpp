@@ -8,7 +8,7 @@ inline void calc_xor_sum(my_list<int> &lst)
 {
     int ans = 0;
     my_list<int>::iterator it = lst.begin();
-    for (int i = 0; i < lst.size(); i++)
+    for (size_t i = 0; i < lst.size(); i++)
     {
         ans += (i ^ *it);
         it++;

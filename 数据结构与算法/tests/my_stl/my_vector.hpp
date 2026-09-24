@@ -544,6 +544,8 @@ public:
     iterator insert(iterator pos, const T &val)
     {
         int idx = (pos == end() ? size_ : pos - begin()); // 扩容后pos会失效，因此需要先记录下标
+        T tmp = val;
+        // val可能是vector内部元素,防止插入过程中扩容等因素导致val失效,先拷贝一份
         if (size_ == capacity_)
         {
             reallocate(capacity_ == 0 ? 1 : size_ * 2);
@@ -553,7 +555,7 @@ public:
         // 末尾插入，等同于push_back
         if (pos == end())
         {
-            push_back(val);
+            push_back(tmp);
         }
         else
         {
@@ -564,7 +566,7 @@ public:
             {
                 *it = std::move(*(it - 1));
             }
-            *pos = val;
+            *pos = tmp;
             size_++;
         }
         return pos;

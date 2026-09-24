@@ -1,5 +1,7 @@
 #ifndef MY_UTILS
 #define MY_UTILS
+#include <utility>
+
 // 去引用
 template <typename T>
 struct RemoveRef
@@ -22,9 +24,9 @@ struct RemoveRef<T &&>
 template <typename T>
 void my_swap(T &a, T &b)
 {
-    T tmp = a;
-    a = b;
-    b = tmp;
+    T tmp = std::move(a);
+    a = std::move(b);
+    b = std::move(tmp);
 }
 
 template <typename T>
@@ -41,7 +43,7 @@ template <typename T>
 class my_greater
 {
 public:
-    bool operator()(const T &a, const T &b)
+    bool operator()(const T &a, const T &b) const
     {
         return a > b;
     }

@@ -79,7 +79,8 @@ public:
     {
         // 对源对象置空
         other.len_ = 0;
-        other.str_ = nullptr;
+        other.str_ = new char[1];
+        other.str_[0] = '\0';
     }
     ~my_string()
     {
@@ -105,24 +106,29 @@ public:
             str_ = other.str_;
             len_ = other.len_;
             other.len_ = 0;
-            other.str_ = nullptr;
+            other.str_ = new char[1];
+            other.str_[0] = '\0';
         }
         return *this;
     }
     my_string &operator=(const char *src)
     {
-        delete[] str_;
-        if (src)
+        // 需要防止从c_str()自赋值
+        if (src != c_str())
         {
-            len_ = my_strlen(src);
-            str_ = new char[len_ + 1];
-            my_strcpy(str_, src);
-        }
-        else
-        {
-            len_ = 0;
-            str_ = new char[1];
-            str_[0] = '\0';
+            delete[] str_;
+            if (src)
+            {
+                len_ = my_strlen(src);
+                str_ = new char[len_ + 1];
+                my_strcpy(str_, src);
+            }
+            else
+            {
+                len_ = 0;
+                str_ = new char[1];
+                str_[0] = '\0';
+            }
         }
         return *this;
     }
