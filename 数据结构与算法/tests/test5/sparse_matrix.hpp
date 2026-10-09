@@ -168,7 +168,7 @@ public:
         }
     }
 
-    sparse_matrix operator*(const T &c) // 数乘矩阵
+    sparse_matrix operator*(const T &c) const // 数乘矩阵
     {
         if (!c)
         {
@@ -243,7 +243,36 @@ public:
         }
     }
 
-    sparse_matrix operator*(const sparse_matrix &other) // 矩阵相乘
+    void add_at(long long i, long long j, const T &v) // 在(i,j)处加v
+    {
+        if (i < 0 || j < 0 || i >= row_cnt_ || j >= col_cnt_)
+        {
+            throw BadIndex(i, j);
+        }
+        if (!v)
+        {
+            return;
+        }
+        MatrixTerm tmp(i, j, v);
+        auto it = data_.lower_bound(data_.begin(), data_.end(), tmp, lexicographical_oder_less());
+        if (it == data_.end() || (*it).row != i || (*it).col != j) // 要插入
+        {
+            data_.insert(it, std::move(tmp));
+        }
+        else // 要修改
+        {
+            if (it->val + v)
+            {
+                it->val += v;
+            }
+            else
+            {
+                data_.erase(it);
+            }
+        }
+    }
+
+    sparse_matrix operator*(const sparse_matrix &other) const // 矩阵相乘
     {
         if (col_cnt_ != other.row_cnt_)
         {
@@ -251,18 +280,14 @@ public:
         }
         sparse_matrix ret(row_cnt_, other.col_cnt_);
 
-        for (auto item1 : data_)
+        for (auto &item1 : data_)
         {
-            for (auto item2 : other.data_)
+            auto r1 = item1.row;
+            auto c1 = item1.col;
+            auto it2 = other.data_.lower_bound(other.data_.begin(), other.data_.end(), MatrixTerm(c1, 0), lexicographical_oder_less());
+            for (; it2 != other.data_.end() && it2->row == c1; it2++)
             {
-                auto r1 = item1.row;
-                auto c1 = item1.col;
-                auto r2 = item2.row;
-                auto c2 = item2.col;
-                if (c1 == r2)
-                {
-                    ret.set(r1, c2, ret.get(r1, c2) + item1.val * item2.val);
-                }
+                ret.add_at(r1, it2->col, (item1.val) * (it2->val));
             }
         }
         return ret;
@@ -273,7 +298,7 @@ public:
         return operator=(operator*(other));
     }
 
-    sparse_matrix operator+(const sparse_matrix &other) // 矩阵加法
+    sparse_matrix operator+(const sparse_matrix &other) const // 矩阵加法
     {
         if (other.row_cnt_ != row_cnt_ || other.col_cnt_ != col_cnt_)
         {
