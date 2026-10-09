@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <utility> // std::move / std::forward / std::move_if_noexcept
 #include <new>     // placement new / ::operator new
+#include "my_utils.hpp"
 
 template <typename T>
 class my_vector
@@ -252,17 +253,28 @@ public:
 
         iterator operator-(int n) const
         {
+            if (!ptr)
+            {
+                return iterator(ptr);
+            }
             return iterator(ptr - n);
         }
 
         int operator-(const iterator &rht) const
         {
+            if (ptr == rht.ptr)
+            {
+                return 0;
+            }
             return ptr - rht.ptr;
         }
 
         iterator &operator-=(int n)
         {
-            ptr -= n;
+            if (ptr)
+            {
+                ptr -= n;
+            }
             return *this;
         }
 
@@ -570,6 +582,62 @@ public:
             size_++;
         }
         return pos;
+    }
+
+    template <typename lesstype = my_less<>, typename tar_type>
+    iterator lower_bound(iterator first, iterator last, const tar_type &tar, lesstype cmp = lesstype{})
+    {
+        iterator l = first;
+        iterator r = last - 1;
+        iterator mid = l + (r - l) / 2;
+        while (r - l >= 0 && l != last)
+        {
+            mid = l + (r - l) / 2;
+            if (cmp(*mid, tar))
+            {
+                l = mid + 1;
+            }
+            else
+            {
+                if (mid != first && !cmp(*(mid - 1), tar))
+                {
+                    r = mid - 1;
+                }
+                else
+                {
+                    return mid;
+                }
+            }
+        }
+        return last;
+    }
+
+    template <typename lesstype = my_less<>, typename tar_type>
+    const_iterator lower_bound(const_iterator first, const_iterator last, const tar_type &tar, lesstype cmp = lesstype{}) const
+    {
+        const_iterator l = first;
+        const_iterator r = last - 1;
+        const_iterator mid = l + (r - l) / 2;
+        while (r - l >= 0 && l != last)
+        {
+            mid = l + (r - l) / 2;
+            if (cmp(*mid, tar))
+            {
+                l = mid + 1;
+            }
+            else
+            {
+                if (mid != first && !cmp(*(mid - 1), tar))
+                {
+                    r = mid - 1;
+                }
+                else
+                {
+                    return mid;
+                }
+            }
+        }
+        return last;
     }
 };
 

@@ -30,8 +30,8 @@ private:
 
 public:
     // 名次排序(即计数排序)
-    template <typename random_it_type, typename cmp_type>
-    void rank_sort(random_it_type begin, random_it_type end, cmp_type cmp)
+    template <typename random_it_type, typename cmp_type = my_less<>>
+    void rank_sort(random_it_type begin, random_it_type end, cmp_type cmp = cmp_type{})
     {
         int n = end - begin;
         using elem_type = typename RemoveRef<decltype(*begin)>::type;
@@ -74,8 +74,8 @@ public:
     }
 
     // 及时终止的选择排序
-    template <typename random_it_type, typename cmp_type>
-    void select_sort(random_it_type begin, random_it_type end, cmp_type cmp)
+    template <typename random_it_type, typename cmp_type = my_less<>>
+    void select_sort(random_it_type begin, random_it_type end, cmp_type cmp = cmp_type{})
     {
         int n = end - begin;
         int cnt_of_sorted = 0;
@@ -96,8 +96,8 @@ public:
     }
 
     // 及时终止的冒泡排序
-    template <typename random_it_type, typename cmp_type>
-    void bubble_sort(random_it_type begin, random_it_type end, cmp_type cmp)
+    template <typename random_it_type, typename cmp_type = my_less<>>
+    void bubble_sort(random_it_type begin, random_it_type end, cmp_type cmp = cmp_type{})
     {
         int n = end - begin;
         for (int i = 0; i < n; i++)
@@ -119,8 +119,8 @@ public:
     }
 
     // 插入排序
-    template <typename random_it_type, typename cmp_type>
-    void insert_sort(random_it_type begin, random_it_type end, cmp_type cmp)
+    template <typename random_it_type, typename cmp_type = my_less<>>
+    void insert_sort(random_it_type begin, random_it_type end, cmp_type cmp = cmp_type{})
     {
         int n = end - begin;
         for (int i = 1; i < n; i++)

@@ -397,8 +397,8 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const my_list<U> &lst);
 
     /*---排序链表（归并排序）---*/
-    template <typename cmp_type>
-    void sort(cmp_type cmp)
+    template <typename cmp_type = my_less<T>>
+    void sort(cmp_type cmp = cmp_type())
     {
         if (size_ <= 1)
         {
@@ -422,11 +422,6 @@ public:
         }
         sentinel.prev_ = new_tail;
         new_tail->next_ = &sentinel;
-    }
-
-    void sort()
-    {
-        sort(my_less<T>());
     }
 };
 

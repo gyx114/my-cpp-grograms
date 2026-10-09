@@ -29,23 +29,43 @@ void my_swap(T &a, T &b)
     b = std::move(tmp);
 }
 
-template <typename T>
-class my_less
+template <typename T = void>
+struct my_less
 {
-public:
     bool operator()(const T &a, const T &b) const
     {
         return a < b;
     }
 };
 
-template <typename T>
-class my_greater
+// 对void版本特化
+template <>
+struct my_less<void>
 {
-public:
+    template <typename T, typename U>
+    constexpr auto operator()(T &&a, U &&b) const -> decltype(std::forward<T>(a) < std::forward<U>(b))
+    {
+        return std::forward<T>(a) < std::forward<U>(b);
+    }
+};
+
+template <typename T = void>
+struct my_greater
+{
     bool operator()(const T &a, const T &b) const
     {
         return a > b;
+    }
+};
+
+// 对void版本特化
+template <>
+struct my_greater<void>
+{
+    template <typename T, typename U>
+    constexpr auto operator()(T &&a, U &&b) const -> decltype(std::forward<T>(a) > std::forward<U>(b))
+    {
+        return std::forward<T>(a) > std::forward<U>(b);
     }
 };
 
