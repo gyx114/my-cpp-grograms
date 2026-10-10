@@ -2,7 +2,6 @@
 #define MY_LIST
 
 #include "my_utils.hpp"
-#include <utility> //std::move
 #include <cstddef> //size_t
 #include <iostream>
 
@@ -21,7 +20,7 @@ struct node : public base_node
     T data_;
 
     node(const T &data, base_node *next = nullptr, base_node *prev = nullptr) : base_node(next, prev), data_(data) {}
-    node(T &&data, base_node *next = nullptr, base_node *prev = nullptr) : base_node(next, prev), data_(std::move(data)) {}
+    node(T &&data, base_node *next = nullptr, base_node *prev = nullptr) : base_node(next, prev), data_(my_move(data)) {}
 
     ~node() {}
 };
@@ -285,7 +284,7 @@ public:
     iterator insert(iterator pos, T &&val)
     {
         base_node *p = pos.pnode_;
-        node<T> *new_node = new node<T>(std::move(val), p, p->prev_);
+        node<T> *new_node = new node<T>(my_move(val), p, p->prev_);
         p->prev_->next_ = new_node;
         p->prev_ = new_node;
         size_++;
@@ -337,9 +336,9 @@ public:
 
     /*---头尾操作---*/
     void push_back(const T &val) { insert(end(), val); }
-    void push_back(T &&val) { insert(end(), std::move(val)); }
+    void push_back(T &&val) { insert(end(), my_move(val)); }
     void push_front(const T &val) { insert(begin(), val); }
-    void push_front(T &&val) { insert(begin(), std::move(val)); }
+    void push_front(T &&val) { insert(begin(), my_move(val)); }
 
     void pop_back()
     {
