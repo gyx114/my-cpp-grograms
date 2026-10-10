@@ -28,9 +28,18 @@ struct node : public base_node
 template <typename T>
 class my_list // 双向循环链表
 {
+public:
+    using value_type = T;
+    using size_type = std::size_t;
+    using difference_type = std::ptrdiff_t;
+    using pointer = T *;
+    using const_pointer = const T *;
+    using reference = T &;
+    using const_reference = const T &;
+
 private:
     base_node sentinel; // 哨兵节点，栈上初始化，自己析构
-    size_t size_;
+    size_type size_;
 
     template <typename cmp_type>
     static base_node *merge(base_node *a, base_node *b, cmp_type cmp) // 合并两个有序,双向,无环,无哨兵链表，返回新头
@@ -71,13 +80,13 @@ private:
         return merge(a, b, my_less<T>());
     }
 
-    static base_node *split_list(base_node *from, size_t cnt) // 从from开始数cnt个，然后断开，返回断开点后的节点指针
+    static base_node *split_list(base_node *from, size_type cnt) // 从from开始数cnt个，然后断开，返回断开点后的节点指针
     {
         base_node *ret = from;
         base_node *pre = nullptr;
         if (from)
         {
-            for (size_t i = 0; i < cnt && ret; i++)
+            for (size_type i = 0; i < cnt && ret; i++)
             {
                 pre = ret;
                 ret = ret->next_;
@@ -93,13 +102,13 @@ private:
     template <typename cmp_type>
     static base_node *merge_sort(base_node *head, cmp_type cmp)
     {
-        size_t n = 0; // 链表大小
+        size_type n = 0; // 链表大小
         for (base_node *p = head; p != nullptr; p = p->next_)
         {
             n++;
         }
         base_node dummy(head, nullptr);
-        for (size_t width = 1; width < n; width <<= 1)
+        for (size_type width = 1; width < n; width <<= 1)
         {
             base_node *cur = dummy.next_;  // 当前要归并的两个相邻区间的开头
             base_node *last_tail = &dummy; // 上波归并的尾节点，用于接上这次归并的头,同时也用于把dummy和头连起来
@@ -259,7 +268,7 @@ public:
     my_list &operator=(const my_list &other) = delete;
 
     /*---容量---*/
-    size_t size() const { return size_; }
+    size_type size() const { return size_; }
     bool empty() const { return size_ == 0; }
 
     /*---迭代器---*/
@@ -421,6 +430,25 @@ public:
         }
         sentinel.prev_ = new_tail;
         new_tail->next_ = &sentinel;
+    }
+
+    /*---交换---*/
+    void swap(my_list &other) noexcept
+    {
+        // 不能简单交换哨兵，因为首尾元素还连着原哨兵
+        // 处理哨兵
+        auto tmp = size_ ? sentinel : base_node(&(other.sentinel), &(other.sentinel));
+        sentinel.next_ = other.size_ ? other.sentinel.next_ : &sentinel;
+        sentinel.prev_ = other.size_ ? other.sentinel.prev_ : &sentinel;
+        other.sentinel = tmp;
+
+        sentinel.next_->prev_ = &sentinel;
+        sentinel.prev_->next_ = &sentinel;
+        other.sentinel.next_->prev_ = &(other.sentinel);
+        other.sentinel.prev_->next_ = &(other.sentinel);
+
+        // 处理size
+        my_swap(size_, other.size_);
     }
 };
 

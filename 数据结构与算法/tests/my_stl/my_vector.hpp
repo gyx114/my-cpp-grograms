@@ -1,6 +1,7 @@
 #ifndef MY_VECTOR
 #define MY_VECTOR
 
+#include <cstddef>
 #include <stdexcept>
 #include <utility> // std::move / std::forward / std::move_if_noexcept
 #include <new>     // placement new / ::operator new
@@ -9,10 +10,20 @@
 template <typename T>
 class my_vector
 {
+public:
+    // typedef
+    using value_type = T;
+    using size_type = std::size_t;
+    using difference_type = std::ptrdiff_t; // 迭代器差值
+    using pointer = T *;
+    using const_pointer = const T *;
+    using reference = T &;
+    using const_reference = const T &;
+
 private:
     T *arr_ = nullptr;
-    int size_ = 0;
-    int capacity_ = 0;
+    size_type size_ = 0;
+    size_type capacity_ = 0;
 
     // 清理器
     // 将堆上分配的内存交给一个栈上的清理器
@@ -20,12 +31,12 @@ private:
     struct construction_guard
     {
         T *data;
-        int count;
+        size_type count;
 
-        construction_guard(T *data_, int count_) : data(data_), count(count_) {}
+        construction_guard(T *data_, size_type count_) : data(data_), count(count_) {}
         ~construction_guard()
         {
-            for (int i = 0; i < count; i++)
+            for (size_type i = 0; i < count; i++)
             {
                 (data + i)->~T(); // 逐个析构
             }
@@ -40,7 +51,7 @@ private:
         }
     };
 
-    void reallocate(int n) // 扩容
+    void reallocate(size_type n) // 扩容
     {
         T *new_arr = static_cast<T *>(::operator new(n * sizeof(T))); // 分配内存而不初始化
         // 类型必须是T*，方便指针偏移，对单个位置赋值
@@ -48,7 +59,7 @@ private:
         construction_guard guard(new_arr, 0);
 
         // 移动或者拷贝
-        for (int i = 0; i < size_; i++)
+        for (size_type i = 0; i < size_; i++)
         {
             new (new_arr + i) T(std::move_if_noexcept(arr_[i]));
             guard.count++;
@@ -58,7 +69,7 @@ private:
         guard.release();
 
         // 销毁旧元素
-        for (int i = 0; i < size_; i++)
+        for (size_type i = 0; i < size_; i++)
         {
             arr_[i].~T(); // 对每个对象析构，让内存变为裸内存
         }
@@ -112,12 +123,12 @@ public:
             return tmp;
         }
 
-        const_iterator operator+(int n) const
+        const_iterator operator+(difference_type n) const
         {
             return const_iterator(ptr + n);
         }
 
-        const_iterator &operator+=(int n)
+        const_iterator &operator+=(difference_type n)
         {
             ptr += n;
             return *this;
@@ -136,17 +147,17 @@ public:
             return tmp;
         }
 
-        const_iterator operator-(int n) const
+        const_iterator operator-(difference_type n) const
         {
             return const_iterator(ptr - n);
         }
 
-        int operator-(const const_iterator &rht) const
+        difference_type operator-(const const_iterator &rht) const
         {
             return ptr - rht.ptr;
         }
 
-        const_iterator &operator-=(int n)
+        const_iterator &operator-=(difference_type n)
         {
             ptr -= n;
             return *this;
@@ -227,12 +238,12 @@ public:
             return tmp;
         }
 
-        iterator operator+(int n) const
+        iterator operator+(difference_type n) const
         {
             return iterator(ptr + n);
         }
 
-        iterator &operator+=(int n)
+        iterator &operator+=(difference_type n)
         {
             ptr += n;
             return *this;
@@ -251,7 +262,7 @@ public:
             return tmp;
         }
 
-        iterator operator-(int n) const
+        iterator operator-(difference_type n) const
         {
             if (!ptr)
             {
@@ -260,7 +271,7 @@ public:
             return iterator(ptr - n);
         }
 
-        int operator-(const iterator &rht) const
+        difference_type operator-(const iterator &rht) const
         {
             if (ptr == rht.ptr)
             {
@@ -269,7 +280,7 @@ public:
             return ptr - rht.ptr;
         }
 
-        iterator &operator-=(int n)
+        iterator &operator-=(difference_type n)
         {
             if (ptr)
             {
@@ -314,13 +325,13 @@ public:
         }
     };
 
-    int size() const { return size_; }
+    size_type size() const { return size_; }
 
     bool empty() const { return size_ == 0; }
 
-    int capacity() const { return capacity_; }
+    size_type capacity() const { return capacity_; }
 
-    void reserve(int n)
+    void reserve(size_type n)
     {
         if (n <= capacity_)
         {
@@ -331,7 +342,7 @@ public:
 
     void clear()
     {
-        for (int i = 0; i < size_; i++)
+        for (size_type i = 0; i < size_; i++)
         {
             arr_[i].~T();
         }
@@ -339,15 +350,11 @@ public:
     }
 
     my_vector() = default;
-    my_vector(int sz) : size_(sz), capacity_(sz)
+    my_vector(size_type sz) : size_(sz), capacity_(sz)
     {
-        if (sz < 0)
-        {
-            throw std::logic_error("size不能为负!");
-        }
         arr_ = static_cast<T *>(::operator new(sz * sizeof(T)));
         construction_guard guard(arr_, 0);
-        for (int i = 0; i < sz; i++)
+        for (size_type i = 0; i < sz; i++)
         {
             // 不分配内存，只在指定位置构造
             new (arr_ + i) T();
@@ -355,15 +362,11 @@ public:
         }
         guard.release();
     }
-    my_vector(int sz, const T &val) : size_(sz), capacity_(sz)
+    my_vector(size_type sz, const T &val) : size_(sz), capacity_(sz)
     {
-        if (sz < 0)
-        {
-            throw std::logic_error("size不能为负!");
-        }
         arr_ = static_cast<T *>(::operator new(sz * sizeof(T)));
         construction_guard guard(arr_, 0);
-        for (int i = 0; i < sz; i++)
+        for (size_type i = 0; i < sz; i++)
         {
             // 不分配内存，只在指定位置构造
             new (arr_ + i) T(val);
@@ -375,7 +378,7 @@ public:
     {
         reserve(other.capacity_);
         construction_guard guard(arr_, 0);
-        for (int i = 0; i < other.size_; i++)
+        for (size_type i = 0; i < other.size_; i++)
         {
             new (arr_ + i) T(other.arr_[i]);
             guard.count++;
@@ -390,17 +393,17 @@ public:
         other.capacity_ = 0;
     }
 
-    T &operator[](int idx)
+    reference operator[](size_type idx)
     {
-        if (idx < 0 || idx >= size_)
+        if (idx >= size_)
         {
             throw std::logic_error("下标越界！");
         }
         return arr_[idx];
     }
-    const T &operator[](int idx) const
+    const_reference operator[](size_type idx) const
     {
-        if (idx < 0 || idx >= size_)
+        if (idx >= size_)
         {
             throw std::logic_error("下标越界！");
         }
@@ -442,11 +445,11 @@ public:
         }
     }
 
-    void swap(my_vector &other)
+    void swap(my_vector &other) noexcept
     {
         T *tmp_arr = arr_;
-        int tmp_size = size_;
-        int tmp_cap = capacity_;
+        size_type tmp_size = size_;
+        size_type tmp_cap = capacity_;
 
         arr_ = other.arr_;
         size_ = other.size_;
@@ -472,7 +475,7 @@ public:
     {
         if (this != &that)
         {
-            for (int i = 0; i < size_; i++)
+            for (size_type i = 0; i < size_; i++)
             {
                 (arr_ + i)->~T();
             }
@@ -539,13 +542,13 @@ public:
         {
             return first;
         }
-        int n = last - first;
+        size_type n = static_cast<size_type>(last - first);
         for (auto it = last; it != end(); it++)
         {
             *(it - n) = std::move_if_noexcept(*it);
         }
         // 析构后n个元素
-        for (int i = 0; i < n; i++)
+        for (size_type i = 0; i < n; i++)
         {
             (arr_ + size_ - 1 - i)->~T();
         }
@@ -555,7 +558,7 @@ public:
 
     iterator insert(iterator pos, const T &val)
     {
-        int idx = (pos == end() ? size_ : pos - begin()); // 扩容后pos会失效，因此需要先记录下标
+        size_type idx = (pos == end() ? size_ : static_cast<size_type>(pos - begin())); // 扩容后pos会失效，因此需要先记录下标
         T tmp = val;
         // val可能是vector内部元素,防止插入过程中扩容等因素导致val失效,先拷贝一份
         if (size_ == capacity_)

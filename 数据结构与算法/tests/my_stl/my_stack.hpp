@@ -11,8 +11,14 @@ private:
     Container data_;
 
 public:
+    using container_type = Container;
     using value_type = typename Container::value_type;
     using size_type = typename Container::size_type;
+    using difference_type = typename Container::difference_type;
+    using reference = typename Container::reference;
+    using const_reference = typename Container::const_reference;
+    using pointer = typename Container::pointer;
+    using const_pointer = typename Container::const_pointer;
 
     my_stack() {}
     ~my_stack() {}
