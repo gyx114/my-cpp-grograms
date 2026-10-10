@@ -2,12 +2,14 @@
 #define CALC_XOR_SUM
 
 #include <iostream>
-#include "../my_stl/my_list.hpp"
+#include "../my_stl/list.hpp"
 
-inline void calc_xor_sum(my_list<int> &lst)
+using namespace gyx;
+
+inline void calc_xor_sum(list<int> &lst)
 {
     int ans = 0;
-    my_list<int>::iterator it = lst.begin();
+    list<int>::iterator it = lst.begin();
     for (size_t i = 0; i < lst.size(); i++)
     {
         ans += (i ^ *it);

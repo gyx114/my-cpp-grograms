@@ -1,4 +1,4 @@
-#include "../my_stl/my_list.hpp"
+#include "../my_stl/list.hpp"
 #include <iostream>
 #include "calc_xor_sum.hpp"
 
@@ -8,7 +8,9 @@
 #define INQUIRY 4
 #define OUTPUT 5
 
-void one_operation(my_list<int> &lst)
+using namespace gyx;
+
+void one_operation(list<int> &lst)
 {
     int op;
     std::cin >> op;
@@ -30,7 +32,7 @@ void one_operation(my_list<int> &lst)
     {
         int val;
         std::cin >> val;
-        my_list<int>::iterator it = lst.search(val);
+        list<int>::iterator it = lst.search(val);
         if (it == lst.end())
         {
             std::cout << "-1" << std::endl;
@@ -53,7 +55,7 @@ void one_operation(my_list<int> &lst)
     {
         int val;
         std::cin >> val;
-        my_list<int>::iterator it = lst.begin();
+        list<int>::iterator it = lst.begin();
         for (int i = 0; it != lst.end(); i++, it++)
         {
             if (*it == val)
@@ -81,7 +83,7 @@ int main()
 {
     int n, q;
     std::cin >> n >> q;
-    my_list<int> lst;
+    list<int> lst;
     for (int i = 0; i < n; i++)
     {
         int val;

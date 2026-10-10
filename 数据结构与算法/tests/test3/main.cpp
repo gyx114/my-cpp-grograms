@@ -1,8 +1,10 @@
 #include <iostream>
-#include "my_vector.hpp"
-#include "my_string.hpp"
+#include "../my_stl/vector.hpp"
+#include "../my_stl/string.hpp"
 #include "people.hpp"
 #include "contacts.hpp"
+
+using namespace gyx;
 
 #define INSERT 0
 #define DELETE 1
@@ -26,7 +28,7 @@ void one_operation(contacts &contact)
 
     case DELETE:
     {
-        my_string name;
+        string name;
         std::cin >> name;
         contact.del_people(name);
         break;
@@ -34,7 +36,7 @@ void one_operation(contacts &contact)
 
     case MODIFY:
     {
-        my_string name;
+        string name;
         std::cin >> name;
         int op;
         std::cin >> op;
@@ -44,7 +46,7 @@ void one_operation(contacts &contact)
 
     case FIND:
     {
-        my_string name;
+        string name;
         std::cin >> name;
         std::cout << contact.find_people(name) << std::endl;
         break;

@@ -1,13 +1,7 @@
-#include "sorts.hpp"
+#include "../my_stl/sorts.hpp"
 #include <iostream>
-template <typename T>
-struct less
-{
-    bool operator()(const T &x, const T &y) const
-    {
-        return x < y;
-    }
-};
+using namespace gyx;
+
 int main()
 {
     int n;

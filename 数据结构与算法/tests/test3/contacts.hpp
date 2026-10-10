@@ -2,9 +2,11 @@
 #define CONTACTS_HPP
 
 #include <iostream>
-#include "my_vector.hpp"
-#include "my_string.hpp"
+#include "../my_stl/vector.hpp"
+#include "../my_stl/string.hpp"
 #include "people.hpp"
+
+using namespace gyx;
 
 #define EDIT_PHONE 1
 #define EDIT_CLASS 2
@@ -13,7 +15,7 @@
 class contacts
 {
 private:
-    my_vector<people> table;
+    vector<people> table;
 
 public:
     contacts() {}
@@ -28,7 +30,7 @@ public:
         table.push_back(std::move(p));
     }
 
-    void del_people(const my_string &name)
+    void del_people(const string &name)
     {
         for (int i = 0; i < table.size(); i++)
         {
@@ -40,7 +42,7 @@ public:
         }
     }
 
-    void edit_people(int op, const my_string &name)
+    void edit_people(int op, const string &name)
     {
         auto it = table.begin();
         for (; it != table.end() && it->get_name() != name; it++)
@@ -68,7 +70,7 @@ public:
         }
     }
 
-    bool find_people(const my_string &name)
+    bool find_people(const string &name)
     {
         auto it = table.begin();
         for (; it != table.end(); it++)

@@ -1,13 +1,15 @@
 #ifndef SPARSE_MATRIX_HPP
 #define SPARSE_MATRIX_HPP
 
-#include "../my_stl/my_vector.hpp"
+#include "../my_stl/vector.hpp"
 #include "../my_stl/sorts.hpp"
 #include <utility>
 #include <cstddef>
 #include <iostream>
 #include <stdexcept>
 #include <limits>
+
+using namespace gyx;
 
 template <typename T>
 class sparse_matrix
@@ -221,7 +223,7 @@ public:
             throw BadIndex(i, j);
         }
         MatrixTerm tmp(i, j, v);
-        typename my_vector<MatrixTerm>::iterator it = data_.lower_bound(data_.begin(), data_.end(), tmp, lexicographical_oder_less());
+        typename vector<MatrixTerm>::iterator it = data_.lower_bound(data_.begin(), data_.end(), tmp, lexicographical_oder_less());
 
         if (it == data_.end() || (*it).row != i || (*it).col != j) // 原本没记录
         {
@@ -355,9 +357,9 @@ public:
         to_csr();
         for (auto &item : data_)
         {
-            my_swap(item.row, item.col);
+            swap(item.row, item.col);
         }
-        my_swap(row_cnt_, col_cnt_);
+        swap(row_cnt_, col_cnt_);
     }
 
     template <typename Y>
@@ -366,7 +368,7 @@ public:
 private:
     size_t row_cnt_;
     size_t col_cnt_;
-    my_vector<MatrixTerm> data_;
+    vector<MatrixTerm> data_;
 
     void to_csr() // 记录变成列主顺序
     {

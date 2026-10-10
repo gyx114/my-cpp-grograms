@@ -1,13 +1,15 @@
-#include "../my_stl/my_list.hpp"
+#include "../my_stl/list.hpp"
 #include <iostream>
-#include "../my_stl/my_utils.hpp"
-#include "../my_stl/my_vector.hpp"
+#include "../my_stl/utility.hpp"
+#include "../my_stl/vector.hpp"
 #include "../my_stl/sorts.hpp"
 #include "calc_xor_sum.hpp"
 
-void merge_and_calc_xor_sum(const my_list<int> &lst1, const my_list<int> &lst2)
+using namespace gyx;
+
+void merge_and_calc_xor_sum(const list<int> &lst1, const list<int> &lst2)
 {
-    my_list<int> merged;
+    list<int> merged;
     auto it1 = lst1.begin();
     auto it2 = lst2.begin();
     while (it1 != lst1.end() && it2 != lst2.end())
@@ -41,14 +43,14 @@ void solution_1()
 { // 先排序再建表
     int n, m;
     std::cin >> n >> m;
-    my_vector<int> v1;
+    vector<int> v1;
     for (int i = 0; i < n; i++)
     {
         int n;
         std::cin >> n;
         v1.push_back(n);
     }
-    my_vector<int> v2;
+    vector<int> v2;
     for (int i = 0; i < m; i++)
     {
         int n;
@@ -57,11 +59,11 @@ void solution_1()
     }
 
     sorter obj_sorter;
-    obj_sorter.insert_sort(v1.begin(), v1.end(), my_less<int>());
-    obj_sorter.insert_sort(v2.begin(), v2.end(), my_less<int>());
+    obj_sorter.insert_sort(v1.begin(), v1.end(), less<int>());
+    obj_sorter.insert_sort(v2.begin(), v2.end(), less<int>());
 
-    my_list<int> lst1;
-    my_list<int> lst2;
+    list<int> lst1;
+    list<int> lst2;
 
     for (auto i : v1)
     {
@@ -83,8 +85,8 @@ void solution_2()
     // 先建表再排序
     int n, m;
     std::cin >> n >> m;
-    my_list<int> lst1;
-    my_list<int> lst2;
+    list<int> lst1;
+    list<int> lst2;
     for (int i = 0; i < n; i++)
     {
         int val;

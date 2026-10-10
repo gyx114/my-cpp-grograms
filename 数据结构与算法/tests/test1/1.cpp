@@ -1,8 +1,12 @@
 #include <iostream>
-#include "my_vector.hpp"
-using namespace std;
+#include "../my_stl/vector.hpp"
+using namespace gyx;
 
-void dfs(my_vector<int> &vec, int val /*原序列价值*/, int cnt /*序列中已有几个*/, int idx, int &ans)
+#define cin std::cin
+#define cout std::cout
+#define endl std::endl
+
+void dfs(vector<int> &vec, int val /*原序列价值*/, int cnt /*序列中已有几个*/, int idx, int &ans)
 {
     if (idx == vec.size())
     {
@@ -24,7 +28,7 @@ int main()
 {
     int n;
     cin >> n;
-    my_vector<int> vec(n);
+    vector<int> vec(n);
     for (int i = 0; i < n; i++)
     {
         cin >> vec[i];

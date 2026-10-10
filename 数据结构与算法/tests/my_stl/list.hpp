@@ -397,7 +397,7 @@ namespace gyx
             base_node *p = &sentinel;
             do
             {
-                swap(p->prev_, p->next_);
+                gyx::swap(p->prev_, p->next_);
                 p = p->prev_;
             } while (p != &sentinel);
         }
@@ -450,7 +450,7 @@ namespace gyx
             other.sentinel.prev_->next_ = &(other.sentinel);
 
             // 处理size
-            swap(size_, other.size_);
+            gyx::swap(size_, other.size_);
         }
     };
 

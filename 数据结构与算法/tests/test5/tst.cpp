@@ -1,9 +1,11 @@
-#include "../my_stl/my_vector.hpp"
+#include "../my_stl/vector.hpp"
 #include "../my_stl/sorts.hpp"
 #include <iostream>
 #include "sparse_matrix.hpp"
 #include <vector>
 #include <algorithm>
+
+using namespace gyx;
 
 int main()
 {

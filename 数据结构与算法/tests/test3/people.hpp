@@ -1,19 +1,22 @@
 #ifndef PEOPLE_HPP
 #define PEOPLE_HPP
 
-#include "my_string.hpp"
+#include "../my_stl/string.hpp"
 #include <iostream>
+
+using namespace gyx;
+
 class people
 {
 private:
-    my_string name;  // 姓名
-    my_string phone; // 电话号码
-    int clss;        // 班级
-    int dorm;        // 宿舍号
+    string name;  // 姓名
+    string phone; // 电话号码
+    int clss;     // 班级
+    int dorm;     // 宿舍号
 
 public:
     people() : name(), phone(), clss(0), dorm(0) {}
-    people(my_string name_, my_string phone_, int clss_, int dorm_) : name(name_), phone(phone_), clss(clss_), dorm(dorm_) {}
+    people(string name_, string phone_, int clss_, int dorm_) : name(name_), phone(phone_), clss(clss_), dorm(dorm_) {}
     people(people &&other) noexcept : name(std::move(other.name)), phone(std::move(other.phone)), clss(other.clss), dorm(other.dorm) {}
     people(const people &other) : name(other.name), phone(other.phone), clss(other.clss), dorm(other.dorm) {}
 
@@ -37,11 +40,11 @@ public:
     }
 
     // get方法(均为非const，便于修改)
-    my_string &get_name()
+    string &get_name()
     {
         return name;
     }
-    my_string &get_phone()
+    string &get_phone()
     {
         return phone;
     }
@@ -55,11 +58,11 @@ public:
     }
 
     // set方法
-    void set_phone(const my_string &tar)
+    void set_phone(const string &tar)
     {
         phone = tar;
     }
-    void set_phone(my_string &&tar)
+    void set_phone(string &&tar)
     {
         phone = std::move(tar);
     }
