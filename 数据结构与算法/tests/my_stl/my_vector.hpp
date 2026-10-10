@@ -644,4 +644,10 @@ public:
     }
 };
 
+template <typename T>
+void swap(my_vector<T> &a, my_vector<T> &b) noexcept
+{
+    a.swap(b);
+}
+
 #endif

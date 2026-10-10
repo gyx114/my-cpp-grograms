@@ -465,4 +465,10 @@ inline std::ostream &operator<<(std::ostream &os, const my_list<T> &lst)
     return os;
 }
 
+template <typename T>
+inline void swap(my_list<T> &a, my_list<T> &b) noexcept
+{
+    a.swap(b);
+}
+
 #endif

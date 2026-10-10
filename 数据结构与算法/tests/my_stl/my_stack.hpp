@@ -63,4 +63,10 @@ public:
     }
 };
 
+template <typename T>
+void swap(my_stack<T> &a, my_stack<T> &b) noexcept
+{
+    a.swap(b);
+}
+
 #endif
