@@ -362,6 +362,11 @@ public:
         swap(row_cnt_, col_cnt_);
     }
 
+    void push_back_to_the_none_zero_table(int r, int c, const T &v)
+    {
+        data_.emplace_back(r, c, v);
+    }
+
     template <typename Y>
     friend std::ostream &operator<<(std::ostream &os, const sparse_matrix<Y> &obj);
 

@@ -140,6 +140,11 @@ namespace gyx
             return len_;
         }
 
+        int size() const
+        {
+            return len_;
+        }
+
         const char *c_str() const noexcept
         {
             return str_;
