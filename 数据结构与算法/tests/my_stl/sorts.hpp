@@ -5,7 +5,7 @@
 
 namespace gyx
 {
-    class sorter // 排序类，提供名次排序、及时终止的选择排序、及时终止的冒泡排序、插入排序操作
+    class sorter // 排序类
     {
     private:
         // 选择
@@ -31,7 +31,7 @@ namespace gyx
         }
 
         template <typename random_it_type, typename cmp_type>
-        void quick_sort_impl(random_it_type begin, random_it_type end, cmp_type cmp)
+        void quick_sort_impl(random_it_type begin, random_it_type end, cmp_type cmp) // 快排的递归实现
         {
             int n = end - begin;
             if (n <= 1)
