@@ -282,16 +282,77 @@ public:
         }
         sparse_matrix ret(row_cnt_, other.col_cnt_);
 
+        vector<int> other_row_start(other.row_cnt_ + 1); // other的行索引数组，第i行在data_中的[ other_row_start[i] , other_row_start[i+1] )
+
+        for (auto &item2 : other.data_)
+        {
+            other_row_start[item2.row + 1]++; // 先记录每一行有几个元素
+        }
+        for (int i = 1; i < other.row_cnt_ + 1; i++)
+        {
+            other_row_start[i] += other_row_start[i - 1]; // 求前缀和之后就是行索引
+        }
+
+        vector<T> temp(other.col_cnt_); // 临时矩阵，缓存结果
+        vector<int> used;               // temp矩阵的哪些下标被用过
+        used.reserve(other.col_cnt_);
+
+        sorter ster;
+        int last_row = 0;
         for (auto &item1 : data_)
         {
             auto r1 = item1.row;
             auto c1 = item1.col;
-            auto it2 = other.data_.lower_bound(other.data_.begin(), other.data_.end(), MatrixTerm(c1, 0), lexicographical_oder_less());
-            for (; it2 != other.data_.end() && it2->row == c1; it2++)
+
+            if (r1 != last_row) // 换行了，要写入结果
             {
-                ret.add_at(r1, it2->col, (item1.val) * (it2->val));
+                ster.quick_sort(used.begin(), used.end());
+                int last_idx = -1;
+                for (auto idx : used)
+                {
+                    if (idx != last_idx)
+                    {
+                        if (temp[idx])
+                        {
+                            ret.data_.emplace_back(last_row, idx, temp[idx]);
+                            temp[idx] = 0; // 写完结果顺手清零
+                        }
+                        last_idx = idx;
+                    }
+                }
+                last_row = r1;
+
+                // 然后清空
+                used.clear();
+            }
+
+            for (int i = other_row_start[c1]; i < other_row_start[c1 + 1]; i++)
+            {
+                auto c2 = other.data_[i].col;
+                T v = item1.val * other.data_[i].val;
+                if (!temp[c2])
+                {
+                    used.push_back(c2);
+                }
+                temp[c2] += v;
             }
         }
+        // 最后一行写入结果
+        ster.quick_sort(used.begin(), used.end());
+        int last_idx = -1;
+        for (auto idx : used)
+        {
+            if (idx != last_idx)
+            {
+                if (temp[idx])
+                {
+                    ret.data_.emplace_back(last_row, idx, temp[idx]);
+                    temp[idx] = 0; // 写完结果顺手清零
+                }
+                last_idx = idx;
+            }
+        }
+
         return ret;
     }
 

@@ -30,6 +30,46 @@ namespace gyx
             return is_sorted ? -91 : idx_selected;
         }
 
+        template <typename random_it_type, typename cmp_type>
+        void quick_sort_impl(random_it_type begin, random_it_type end, cmp_type cmp)
+        {
+            int n = end - begin;
+            if (n <= 1)
+            {
+                return;
+            }
+
+            auto pivot = *(begin + n / 2);
+            int left = 0;
+            int right = n - 1;
+            while (left <= right)
+            {
+                while (cmp(*(begin + left), pivot))
+                {
+                    left++;
+                }
+                while (cmp(pivot, *(begin + right)))
+                {
+                    right--;
+                }
+                if (left <= right)
+                {
+                    swap(*(begin + left), *(begin + right));
+                    left++;
+                    right--;
+                }
+            }
+
+            if (right >= 0)
+            {
+                quick_sort_impl(begin, begin + right + 1, cmp);
+            }
+            if (left < n)
+            {
+                quick_sort_impl(begin + left, end, cmp);
+            }
+        }
+
     public:
         // 名次排序(即计数排序)
         template <typename random_it_type, typename cmp_type = less<>>
@@ -95,6 +135,13 @@ namespace gyx
                     return;
                 }
             }
+        }
+
+        // 快速排序
+        template <typename random_it_type, typename cmp_type = less<>>
+        void quick_sort(random_it_type begin, random_it_type end, cmp_type cmp = cmp_type{})
+        {
+            quick_sort_impl(begin, end, cmp);
         }
 
         // 及时终止的冒泡排序
