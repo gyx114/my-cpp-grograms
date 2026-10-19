@@ -438,8 +438,8 @@ private:
 
     void to_csr() // 记录变成列主顺序
     {
-        sorter st;
-        st.quick_sort(data_.begin(), data_.end(), csr_sorter_less());
+        sorter ster;
+        ster.quick_sort(data_.begin(), data_.end(), csr_sorter_less());
     }
 
     struct lexicographical_oder_less // 行主字典序的less
