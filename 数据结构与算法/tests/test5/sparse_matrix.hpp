@@ -282,7 +282,7 @@ public:
         }
         sparse_matrix ret(row_cnt_, other.col_cnt_);
 
-        vector<int> other_row_start(other.row_cnt_ + 1); // other的行索引数组，第i行在data_中的[ other_row_start[i] , other_row_start[i+1] )
+        vector<int> other_row_start(other.row_cnt_ + 1); // other的行索引数组，第i行在data_中的下标范围为[ other_row_start[i] , other_row_start[i+1] )
 
         for (auto &item2 : other.data_)
         {
@@ -358,7 +358,7 @@ public:
 
     sparse_matrix &operator*=(const sparse_matrix &other)
     {
-        return operator=(operator*(other));
+        return operator=(move(operator*(other)));
     }
 
     sparse_matrix operator+(const sparse_matrix &other) const // 矩阵加法
@@ -410,7 +410,7 @@ public:
 
     sparse_matrix &operator+=(const sparse_matrix &other)
     {
-        return operator=(operator+(other));
+        return operator=(move(operator+(other)));
     }
 
     void rotate()
@@ -439,7 +439,7 @@ private:
     void to_csr() // 记录变成列主顺序
     {
         sorter st;
-        st.insert_sort(data_.begin(), data_.end(), csr_sorter_less());
+        st.quick_sort(data_.begin(), data_.end(), csr_sorter_less());
     }
 
     struct lexicographical_oder_less // 行主字典序的less

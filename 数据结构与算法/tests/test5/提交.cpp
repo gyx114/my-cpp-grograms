@@ -9,7 +9,6 @@
 #define GYX_MY_STL_UTILITY_HPP
 
 #include <utility>
-#include <algorithm>
 
 namespace gyx
 {
@@ -756,96 +755,12 @@ namespace gyx
 
 #endif
 
-#ifndef GYX_MY_STL_UTILITY_HPP
-#define GYX_MY_STL_UTILITY_HPP
-
-#include <utility>
-
-namespace gyx
-{
-    // 去引用
-    template <typename T>
-    struct RemoveRef
-    {
-        using type = T;
-    };
-
-    template <typename T>
-    struct RemoveRef<T &>
-    {
-        using type = T;
-    };
-
-    template <typename T>
-    struct RemoveRef<T &&>
-    {
-        using type = T;
-    };
-
-    template <typename T>
-    constexpr typename RemoveRef<T>::type &&move(T &&val) noexcept
-    {
-        return static_cast<typename RemoveRef<T>::type &&>(val);
-    }
-
-    template <typename T>
-    void swap(T &a, T &b)
-    {
-        T tmp = move(a);
-        a = move(b);
-        b = move(tmp);
-    }
-
-    template <typename T = void>
-    struct less
-    {
-        bool operator()(const T &a, const T &b) const
-        {
-            return a < b;
-        }
-    };
-
-    // 对void版本特化
-    template <>
-    struct less<void>
-    {
-        template <typename T, typename U>
-        constexpr auto operator()(T &&a, U &&b) const -> decltype(std::forward<T>(a) < std::forward<U>(b))
-        {
-            return std::forward<T>(a) < std::forward<U>(b);
-        }
-    };
-
-    template <typename T = void>
-    struct greater
-    {
-        bool operator()(const T &a, const T &b) const
-        {
-            return a > b;
-        }
-    };
-
-    // 对void版本特化
-    template <>
-    struct greater<void>
-    {
-        template <typename T, typename U>
-        constexpr auto operator()(T &&a, U &&b) const -> decltype(std::forward<T>(a) > std::forward<U>(b))
-        {
-            return std::forward<T>(a) > std::forward<U>(b);
-        }
-    };
-
-} // namespace gyx
-
-#endif
-
 #ifndef GYX_MY_STL_SORTS_HPP
 #define GYX_MY_STL_SORTS_HPP
 
 namespace gyx
 {
-    class sorter // 排序类，提供名次排序、及时终止的选择排序、及时终止的冒泡排序、插入排序操作
+    class sorter // 排序类
     {
     private:
         // 选择
@@ -871,7 +786,7 @@ namespace gyx
         }
 
         template <typename random_it_type, typename cmp_type>
-        void quick_sort_impl(random_it_type begin, random_it_type end, cmp_type cmp)
+        void quick_sort_impl(random_it_type begin, random_it_type end, cmp_type cmp) // 快排的递归实现
         {
             int n = end - begin;
             if (n <= 1)
@@ -1392,7 +1307,7 @@ public:
 
     sparse_matrix &operator*=(const sparse_matrix &other)
     {
-        return operator=(operator*(other));
+        return operator=(move(operator*(other)));
     }
 
     sparse_matrix operator+(const sparse_matrix &other) const // 矩阵加法
@@ -1444,7 +1359,7 @@ public:
 
     sparse_matrix &operator+=(const sparse_matrix &other)
     {
-        return operator=(operator+(other));
+        return operator=(move(operator+(other)));
     }
 
     void rotate()
@@ -1473,7 +1388,7 @@ private:
     void to_csr() // 记录变成列主顺序
     {
         sorter st;
-        st.insert_sort(data_.begin(), data_.end(), csr_sorter_less());
+        st.quick_sort(data_.begin(), data_.end(), csr_sorter_less());
     }
 
     struct lexicographical_oder_less // 行主字典序的less
