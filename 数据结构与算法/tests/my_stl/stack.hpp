@@ -16,7 +16,6 @@ namespace gyx
         using container_type = Container;
         using value_type = typename Container::value_type;
         using size_type = typename Container::size_type;
-        using difference_type = typename Container::difference_type;
         using reference = typename Container::reference;
         using const_reference = typename Container::const_reference;
         using pointer = typename Container::pointer;
@@ -53,9 +52,9 @@ namespace gyx
 
         bool empty() const noexcept { return data_.empty(); }
         size_type size() const noexcept { return data_.size(); }
-        value_type &top() { return data_.back(); }
-        const value_type &top() const { return data_.back(); }
-        void push(const value_type &val) { data_.push_back(val); }
+        reference top() { return data_.back(); }
+        const_reference top() const { return data_.back(); }
+        void push(const_reference val) { data_.push_back(val); }
         void push(value_type &&val) { data_.push_back(move(val)); }
         void pop() { data_.pop_back(); }
 
@@ -65,8 +64,8 @@ namespace gyx
         }
     };
 
-    template <typename T>
-    void swap(stack<T> &a, stack<T> &b) noexcept
+    template <typename T, typename Container = vector<T>>
+    void swap(stack<T, Container> &a, stack<T, Container> &b) noexcept
     {
         a.swap(b);
     }

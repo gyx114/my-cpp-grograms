@@ -23,7 +23,8 @@ namespace gyx
 
         node(const T &data, base_node *next = nullptr, base_node *prev = nullptr) : base_node(next, prev), data_(data) {}
         node(T &&data, base_node *next = nullptr, base_node *prev = nullptr) : base_node(next, prev), data_(move(data)) {}
-
+        template <typename... Args>
+        node(base_node *next, base_node *prev, Args &&...args) : base_node(next, prev), data_(std::forward<Args>(args)...) {}
         ~node() {}
     };
 
@@ -302,6 +303,17 @@ namespace gyx
             return iterator(new_node);
         }
 
+        template <typename... Args>
+        iterator emplace(iterator pos, Args &&...args)
+        {
+            base_node *p = pos.pnode_;
+            node<T> *new_node = new node<T>(p, p->prev_, std::forward<Args>(args)...);
+            p->prev_->next_ = new_node;
+            p->prev_ = new_node;
+            size_++;
+            return iterator(new_node);
+        }
+
         iterator erase(iterator pos)
         {
             if (pos == end())
@@ -348,8 +360,15 @@ namespace gyx
         /*---头尾操作---*/
         void push_back(const T &val) { insert(end(), val); }
         void push_back(T &&val) { insert(end(), move(val)); }
+
+        template <typename... Args>
+        void emplace_back(Args &&...args) { emplace(end(), std::forward<Args>(args)...); }
+
         void push_front(const T &val) { insert(begin(), val); }
         void push_front(T &&val) { insert(begin(), move(val)); }
+
+        template <typename... Args>
+        void emplace_front(Args &&...args) { emplace(begin(), std::forward<Args>(args)...); }
 
         void pop_back()
         {
