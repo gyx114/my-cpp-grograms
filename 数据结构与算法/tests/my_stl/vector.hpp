@@ -6,6 +6,7 @@
 #include <utility> // std::move / std::forward / std::move_if_noexcept
 #include <new>     // placement new / ::operator new
 #include "utility.hpp"
+#include "iterator.hpp"
 #include <initializer_list>
 
 namespace gyx
@@ -398,8 +399,12 @@ namespace gyx
 
         vector(std::initializer_list<T> il) : vector(il.begin(), il.end()) {} // 委托给范围构造
 
-        template <typename InputIt>
-        vector(InputIt first, InputIt last)
+        template <
+            typename InputIt,
+            typename std::enable_if<
+                detail::is_input_iterator<InputIt>::value,
+                int>::type = 0>
+        vector(InputIt first, InputIt last) // 范围构造
         {
             size_ = 0;
             capacity_ = 0;
