@@ -1,9 +1,9 @@
 #ifndef GYX_BINARY_TREE_HPP
 #define GYX_BINARY_TREE_HPP
-#include "../my_stl/utility.hpp"
-#include "../my_stl/stack.hpp"
-#include "../my_stl/queue.hpp"
-#include "../my_stl/vector.hpp"
+#include "utility.hpp"
+#include "stack.hpp"
+#include "queue.hpp"
+#include "vector.hpp"
 #include <cstddef>
 #include <type_traits>
 #include <iostream>
