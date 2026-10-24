@@ -611,7 +611,7 @@ namespace gyx
         }
 
         template <typename lesstype = less<>, typename tar_type>
-        iterator lower_bound(iterator first, iterator last, const tar_type &tar, lesstype cmp = lesstype{})
+        iterator lower_bound(iterator first, iterator last, const tar_type &tar, lesstype cmp = {})
         {
             iterator l = first;
             iterator r = last - 1;
@@ -639,7 +639,7 @@ namespace gyx
         }
 
         template <typename lesstype = less<>, typename tar_type>
-        const_iterator lower_bound(const_iterator first, const_iterator last, const tar_type &tar, lesstype cmp = lesstype{}) const
+        const_iterator lower_bound(const_iterator first, const_iterator last, const tar_type &tar, lesstype cmp = {}) const
         {
             const_iterator l = first;
             const_iterator r = last - 1;

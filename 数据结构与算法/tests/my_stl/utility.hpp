@@ -41,7 +41,7 @@ namespace gyx
     template <typename T = void>
     struct less
     {
-        bool operator()(const T &a, const T &b) const
+        constexpr bool operator()(const T &a, const T &b) const
         {
             return a < b;
         }
@@ -61,7 +61,7 @@ namespace gyx
     template <typename T = void>
     struct greater
     {
-        bool operator()(const T &a, const T &b) const
+        constexpr bool operator()(const T &a, const T &b) const
         {
             return a > b;
         }
@@ -77,6 +77,12 @@ namespace gyx
             return std::forward<T>(a) > std::forward<U>(b);
         }
     };
+
+    template <typename T, typename Cmp_type = less<>>
+    constexpr const T &max(const T &a, const T &b, Cmp_type cmp = {}) { return cmp(a, b) ? b : a; }
+
+    template <typename T, typename Cmp_type = less<>>
+    constexpr const T &min(const T &a, const T &b, Cmp_type cmp = {}) { return cmp(a, b) ? a : b; }
 
 } // namespace gyx
 

@@ -73,7 +73,7 @@ namespace gyx
     public:
         // 名次排序(即计数排序)
         template <typename random_it_type, typename cmp_type = less<>>
-        void rank_sort(random_it_type begin, random_it_type end, cmp_type cmp = cmp_type{})
+        void rank_sort(random_it_type begin, random_it_type end, cmp_type cmp = {})
         {
             int n = end - begin;
             using elem_type = typename RemoveRef<decltype(*begin)>::type;
@@ -117,7 +117,7 @@ namespace gyx
 
         // 及时终止的选择排序
         template <typename random_it_type, typename cmp_type = less<>>
-        void select_sort(random_it_type begin, random_it_type end, cmp_type cmp = cmp_type{})
+        void select_sort(random_it_type begin, random_it_type end, cmp_type cmp = {})
         {
             int n = end - begin;
             int cnt_of_sorted = 0;
@@ -139,14 +139,14 @@ namespace gyx
 
         // 快速排序
         template <typename random_it_type, typename cmp_type = less<>>
-        void quick_sort(random_it_type begin, random_it_type end, cmp_type cmp = cmp_type{})
+        void quick_sort(random_it_type begin, random_it_type end, cmp_type cmp = {})
         {
             quick_sort_impl(begin, end, cmp);
         }
 
         // 及时终止的冒泡排序
         template <typename random_it_type, typename cmp_type = less<>>
-        void bubble_sort(random_it_type begin, random_it_type end, cmp_type cmp = cmp_type{})
+        void bubble_sort(random_it_type begin, random_it_type end, cmp_type cmp = {})
         {
             int n = end - begin;
             for (int i = 0; i < n; i++)
@@ -169,7 +169,7 @@ namespace gyx
 
         // 插入排序
         template <typename random_it_type, typename cmp_type = less<>>
-        void insert_sort(random_it_type begin, random_it_type end, cmp_type cmp = cmp_type{})
+        void insert_sort(random_it_type begin, random_it_type end, cmp_type cmp = {})
         {
             int n = end - begin;
             for (int i = 1; i < n; i++)

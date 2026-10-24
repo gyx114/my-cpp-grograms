@@ -427,7 +427,7 @@ namespace gyx
 
         /*---排序链表（归并排序）---*/
         template <typename cmp_type = less<T>>
-        void sort(cmp_type cmp = cmp_type())
+        void sort(cmp_type cmp = {})
         {
             if (size_ <= 1)
             {
