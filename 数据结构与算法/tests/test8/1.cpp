@@ -6,7 +6,7 @@ int main()
 {
     int n;
     std::cin >> n;
-    binary_tree<int> bt(n);
+    binary_tree<int> bt(n); // 用int版的专属构造
     // 层序遍历
     bt.level_order([](binary_tree<int>::tree_node *nd) -> void
                    { std::cout << nd->value() << " "; });
