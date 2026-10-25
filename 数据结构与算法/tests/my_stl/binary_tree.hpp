@@ -50,8 +50,10 @@ namespace gyx
 
             T &value() { return val_; }
             const T &value() const { return val_; }
-            tree_node *left() const { return left_; }
-            tree_node *right() const { return right_; }
+            tree_node *left() { return left_; }
+            tree_node *right() { return right_; }
+            const tree_node *left() const { return left_; }
+            const tree_node *right() const { return right_; }
         };
 
     private:
@@ -95,7 +97,7 @@ namespace gyx
         template <typename Op>
         void level_order_impl(tree_node *rt, Op &op) // 层序遍历，使用队列
         {
-            if (!root_)
+            if (!rt)
             {
                 return;
             }
@@ -230,11 +232,11 @@ namespace gyx
         template <typename Op>
         void level_order_impl(const tree_node *rt, Op &op) const // 层序遍历，使用队列
         {
-            if (!root_)
+            if (!rt)
             {
                 return;
             }
-            queue<tree_node *> q;
+            queue<const tree_node *> q;
             q.push(rt);
             while (q.size())
             {
@@ -342,7 +344,7 @@ namespace gyx
             return 1 + max(get_height(rt->left_), get_height(rt->right_));
         }
 
-        tree_node *build_tree(vector<T> &preorder, vector<T> &inorder, int pre_begin, int in_begin, int length)
+        tree_node *build_tree(const vector<T> &preorder, const vector<T> &inorder, int pre_begin, int in_begin, int length)
         {
             if (length == 0)
             {
@@ -370,8 +372,10 @@ namespace gyx
         }; // 使用迭代方式
 
         binary_tree() : root_(nullptr) {} // 空树
+        binary_tree(const binary_tree &other) = delete;
+        binary_tree &operator=(const binary_tree &other) = delete;
 
-        binary_tree(vector<T> &preorder, vector<T> &inorder) // 前序+中序构造，需要调用者保证合法
+        binary_tree(const vector<T> &preorder, const vector<T> &inorder) // 前序+中序构造，需要调用者保证合法
         {
             root_ = build_tree(preorder, inorder, 0, 0, preorder.size());
         }
@@ -433,28 +437,28 @@ namespace gyx
 
 #pragma region const遍历接口
         template <typename Operation_type>
-        void pre_order(Operation_type &&op, recursive_t) const { pre_order_impl_recursion(root_, op); } // 递归先序,操作类必须能接受tree_node*
+        void pre_order(Operation_type &&op, recursive_t) const { pre_order_impl_recursion(root_, op); } // 递归先序,操作类必须能接受const tree_node*
         template <typename Operation_type>
-        void pre_order(Operation_type &&op, iterative_t) const { pre_order_impl_iter(root_, op); } // 迭代先序,操作类必须能接受tree_node*
+        void pre_order(Operation_type &&op, iterative_t) const { pre_order_impl_iter(root_, op); } // 迭代先序,操作类必须能接受const tree_node*
         template <typename Operation_type>
-        void pre_order(Operation_type &&op) const { pre_order_impl_iter(root_, op); } // 默认迭代先序,操作类必须能接受tree_node*
+        void pre_order(Operation_type &&op) const { pre_order_impl_iter(root_, op); } // 默认迭代先序,操作类必须能接受const tree_node*
 
         template <typename Operation_type>
-        void in_order(Operation_type &&op, recursive_t) const { in_order_impl_recursion(root_, op); } // 递归中序,操作类必须能接受tree_node*
+        void in_order(Operation_type &&op, recursive_t) const { in_order_impl_recursion(root_, op); } // 递归中序,操作类必须能接受const tree_node*
         template <typename Operation_type>
-        void in_order(Operation_type &&op, iterative_t) const { in_order_impl_iter(root_, op); } // 迭代中序,操作类必须能接受tree_node*
+        void in_order(Operation_type &&op, iterative_t) const { in_order_impl_iter(root_, op); } // 迭代中序,操作类必须能接受const tree_node*
         template <typename Operation_type>
-        void in_order(Operation_type &&op) const { in_order_impl_iter(root_, op); } // 默认迭代中序,操作类必须能接受tree_node*
+        void in_order(Operation_type &&op) const { in_order_impl_iter(root_, op); } // 默认迭代中序,操作类必须能接受const tree_node*
 
         template <typename Operation_type>
-        void post_order(Operation_type &&op, recursive_t) const { post_order_impl_recursion(root_, op); } // 递归后序,操作类必须能接受tree_node*
+        void post_order(Operation_type &&op, recursive_t) const { post_order_impl_recursion(root_, op); } // 递归后序,操作类必须能接受const tree_node*
         template <typename Operation_type>
-        void post_order(Operation_type &&op, iterative_t) const { post_order_impl_iter(root_, op); } // 迭代后序,操作类必须能接受tree_node*
+        void post_order(Operation_type &&op, iterative_t) const { post_order_impl_iter(root_, op); } // 迭代后序,操作类必须能接受const tree_node*
         template <typename Operation_type>
-        void post_order(Operation_type &&op) const { post_order_impl_iter(root_, op); } // 默认迭代后序,操作类必须能接受tree_node*
+        void post_order(Operation_type &&op) const { post_order_impl_iter(root_, op); } // 默认迭代后序,操作类必须能接受const tree_node*
 
         template <typename Operation_type>
-        void level_order(Operation_type &&op) const { level_order_impl(root_, op); } // 层序,操作类必须能接受tree_node*
+        void level_order(Operation_type &&op) const { level_order_impl(root_, op); } // 层序,操作类必须能接受const tree_node*
 #pragma endregion
 
         size_t size() const
