@@ -136,7 +136,7 @@ namespace gyx
         template <typename... Args>
         void emplace(Args &&...args)
         {
-            data_.emplace_back(std::forward(args...));
+            data_.emplace_back(std::forward<Args>(args)...);
             int idx = data_.size() - 1;
             int dad_idx = to_father(idx);
             auto cmp = Cmp{};
