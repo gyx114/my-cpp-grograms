@@ -13,6 +13,7 @@ namespace gyx
     {
     private:
         Container data_; // 从下标0开始存数据
+        Cmp cmp;         // 比较器
 
         constexpr int to_father(int idx) { return (idx + 1) / 2 - 1; }
         constexpr int to_left_son(int idx) { return (idx + 1) * 2 - 1; }
@@ -20,7 +21,6 @@ namespace gyx
 
         void down(int idx) // 以idx为根的树，向下维护大根性
         {
-            auto cmp = Cmp{};
             auto l = to_left_son(idx);
             auto r = to_right_son(idx);
             bool dir_to_rht = l < data_.size() && r < data_.size() && cmp(data_[l], data_[r]);
@@ -37,11 +37,11 @@ namespace gyx
         }
 
     public:
-        priority_queue() {}
+        priority_queue() : cmp(Cmp{}) {}
 
         ~priority_queue() {}
 
-        priority_queue(const vector<T> &init) : data_(init)
+        priority_queue(const vector<T> &init, Cmp cmp_ = {}) : data_(init), cmp(cmp_)
         {
             if (data_.size())
             {
@@ -52,7 +52,7 @@ namespace gyx
             }
         }
 
-        priority_queue(vector<T> &&init) : data_(move(init))
+        priority_queue(vector<T> &&init, Cmp cmp_ = {}) : data_(move(init)), cmp(cmp_)
         {
             if (data_.size())
             {
@@ -63,7 +63,7 @@ namespace gyx
             }
         }
 
-        priority_queue(std::initializer_list<T> il) : data_(il)
+        priority_queue(std::initializer_list<T> il, Cmp cmp_ = {}) : data_(il), cmp(cmp_)
         {
             if (data_.size())
             {
@@ -75,7 +75,7 @@ namespace gyx
         }
 
         template <typename InputIt, typename std::enable_if<detail::is_input_iterator<InputIt>::value, int>::type = 0>
-        priority_queue(InputIt first, InputIt last) : data_(first, last)
+        priority_queue(InputIt first, InputIt last, Cmp cmp_ = {}) : data_(first, last), cmp(cmp_)
         {
             if (data_.size())
             {
@@ -86,13 +86,14 @@ namespace gyx
             }
         }
 
-        priority_queue(const priority_queue &other) : data_(other.data_) {}
-        priority_queue(priority_queue &&other) noexcept : data_(move(other.data_)) {}
+        priority_queue(const priority_queue &other) : data_(other.data_), cmp(other.cmp) {}
+        priority_queue(priority_queue &&other) noexcept : data_(move(other.data_)), cmp(move(other.cmp)) {}
         operator=(const priority_queue & other)
         {
             if (this != &other)
             {
                 data_ = other.data_;
+                cmp = other.cmp;
             }
             return *this;
         }
@@ -101,6 +102,7 @@ namespace gyx
             if (this != &other)
             {
                 data_ = move(other.data_);
+                cmp = move(other.cmp);
             }
             return *this;
         }
@@ -110,7 +112,6 @@ namespace gyx
             data_.push_back(val);
             int idx = data_.size() - 1;
             int dad_idx = to_father(idx);
-            auto cmp = Cmp{};
             while (dad_idx != -1 && cmp(data_[dad_idx], data_[idx]))
             {
                 swap(data_[dad_idx], data_[idx]);
@@ -124,7 +125,6 @@ namespace gyx
             data_.push_back(move(val));
             int idx = data_.size() - 1;
             int dad_idx = to_father(idx);
-            auto cmp = Cmp{};
             while (dad_idx != -1 && cmp(data_[dad_idx], data_[idx]))
             {
                 swap(data_[dad_idx], data_[idx]);
@@ -139,7 +139,6 @@ namespace gyx
             data_.emplace_back(std::forward<Args>(args)...);
             int idx = data_.size() - 1;
             int dad_idx = to_father(idx);
-            auto cmp = Cmp{};
             while (dad_idx != -1 && cmp(data_[dad_idx], data_[idx]))
             {
                 swap(data_[dad_idx], data_[idx]);

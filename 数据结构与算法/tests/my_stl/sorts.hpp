@@ -2,6 +2,7 @@
 #define GYX_MY_STL_SORTS_HPP
 
 #include "utility.hpp"
+#include "priority_queue.hpp"
 
 namespace gyx
 {
@@ -185,6 +186,21 @@ namespace gyx
                         break;
                     }
                 }
+            }
+        }
+
+        // 堆排序
+        template <typename Bidi_It, typename cmp_type = less<>>
+        void heap_sort(Bidi_It begin, Bidi_It end, cmp_type cmp = {})
+        {
+            using elem_type = typename RemoveRef<decltype(*begin)>::type;
+            priority_queue<elem_type, vector<elem_type>, cmp_type> pq(begin, end, cmp);
+            auto it = end;
+            while (pq.size())
+            {
+                it--;
+                swap(*it, const_cast<elem_type &>(pq.top()));
+                pq.pop();
             }
         }
     };
