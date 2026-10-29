@@ -25,6 +25,7 @@ namespace gyx
 
         public:
             explicit tree_node(const T &v, tree_node *l = nullptr, tree_node *r = nullptr) : val_(v), left_(l), right_(r) {}
+            explicit tree_node(T &&v, tree_node *l = nullptr, tree_node *r = nullptr) : val_(move(v)), left_(l), right_(r) {}
             ~tree_node() {}
 
             tree_node(const tree_node &other) = default;
@@ -370,20 +371,48 @@ namespace gyx
         struct iterative_t // 迭代标签
         {
         }; // 使用迭代方式
+        struct construct_from_input_t // int版本特殊构造，用于实验8要求
+        {
+        };
 
         binary_tree() : root_(nullptr) {} // 空树
         binary_tree(const binary_tree &other) = delete;
         binary_tree &operator=(const binary_tree &other) = delete;
+
+        binary_tree(binary_tree &&other) noexcept : root_(other.root_) { other.root_ = nullptr; }
+        binary_tree &operator=(binary_tree &&other) noexcept
+        {
+            if (this != &other)
+            {
+                swap(root_, other.root_);
+            }
+            return *this;
+        }
+
+        binary_tree(const T &val, binary_tree &&l, binary_tree &&r) // 左右子树构造，只接受右值
+        {
+            root_ = new tree_node(val, l.root_, r.root_);
+            l.root_ = nullptr;
+            r.root_ = nullptr;
+        }
+        binary_tree(T &&val, binary_tree &&l, binary_tree &&r) // 左右子树构造
+        {
+            root_ = new tree_node(move(val), l.root_, r.root_);
+            l.root_ = nullptr;
+            r.root_ = nullptr;
+        }
+
+        explicit binary_tree(const T &val) : root_(new tree_node(val)) {}  // 单根构造
+        explicit binary_tree(T &&val) : root_(new tree_node(move(val))) {} // 单根构造
 
         binary_tree(const vector<T> &preorder, const vector<T> &inorder) // 前序+中序构造，需要调用者保证合法
         {
             root_ = build_tree(preorder, inorder, 0, 0, preorder.size());
         }
 
-        template <typename U = T, typename std::enable_if<std::is_same<U, int>::value, int>::type dummy = 0>
-        binary_tree(int n) // 对于值类型为int的树特化一个构造(用于作业要求)
+        template <typename U = T, typename std::enable_if<std::is_same<U, int>::value, int>::type = 0>
+        binary_tree(int n, construct_from_input_t) // 对于值类型为int的树特化一个构造(用于作业要求)
         {
-            (void)dummy; // 防止编译器警告
             auto v = vector<tree_node *>(n + 1, nullptr);
             for (int i = 1; i <= n; i++)
             {
