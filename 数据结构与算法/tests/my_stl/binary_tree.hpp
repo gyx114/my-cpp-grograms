@@ -1,9 +1,8 @@
 #ifndef GYX_BINARY_TREE_HPP
 #define GYX_BINARY_TREE_HPP
 #include "utility.hpp"
-#include "stack.hpp"
-#include "queue.hpp"
 #include "vector.hpp"
+#include "tree_traverse.hpp"
 #include <cstddef>
 #include <type_traits>
 #include <iostream>
@@ -36,7 +35,7 @@ namespace gyx
             }
 
             tree_node &operator=(const tree_node &other) = default;
-            tree_node &operator=(tree_node &&other)
+            tree_node &operator=(tree_node &&other) noexcept
             {
                 if (this != &other)
                 {
@@ -59,276 +58,6 @@ namespace gyx
 
     private:
         tree_node *root_;
-
-#pragma region 非const遍历实现
-        template <typename Op>
-        void pre_order_impl_recursion(tree_node *rt, Op &op) // 递归版先序遍历实现
-        {
-            if (!rt)
-            {
-                return;
-            }
-            op(rt);
-            pre_order_impl_recursion(rt->left_, op);
-            pre_order_impl_recursion(rt->right_, op);
-        }
-        template <typename Op>
-        void in_order_impl_recursion(tree_node *rt, Op &op) // 递归版中序遍历实现
-        {
-            if (!rt)
-            {
-                return;
-            }
-            in_order_impl_recursion(rt->left_, op);
-            op(rt);
-            in_order_impl_recursion(rt->right_, op);
-        }
-        template <typename Op>
-        void post_order_impl_recursion(tree_node *rt, Op &op) // 递归版后序遍历实现
-        {
-            if (!rt)
-            {
-                return;
-            }
-            post_order_impl_recursion(rt->left_, op);
-            post_order_impl_recursion(rt->right_, op);
-            op(rt);
-        }
-
-        template <typename Op>
-        void level_order_impl(tree_node *rt, Op &op) // 层序遍历，使用队列
-        {
-            if (!rt)
-            {
-                return;
-            }
-            queue<tree_node *> q;
-            q.push(rt);
-            while (q.size())
-            {
-                auto tmp = q.front();
-                op(tmp);
-                if (tmp->left_)
-                {
-                    q.push(tmp->left_);
-                }
-                if (tmp->right_)
-                {
-                    q.push(tmp->right_);
-                }
-                q.pop();
-            }
-        }
-
-        template <typename Op>
-        void pre_order_impl_iter(tree_node *rt, Op &op) // 迭代版本先序遍历实现
-        {
-            stack<tree_node *> st;
-            tree_node *cur = rt;
-            while (cur || !st.empty())
-            {
-                while (cur)
-                {
-                    if (cur->right_)
-                    {
-                        st.push(cur->right_);
-                    }
-                    op(cur);
-                    cur = cur->left_;
-                }
-                if (!st.empty())
-                {
-                    cur = st.top();
-                    st.pop();
-                }
-            }
-        }
-        template <typename Op>
-        void in_order_impl_iter(tree_node *rt, Op &op) // 迭代版本中序遍历实现
-        {
-            stack<tree_node *> st;
-            tree_node *cur = rt;
-            while (cur || !st.empty())
-            {
-                while (cur)
-                {
-                    st.push(cur);
-                    cur = cur->left_;
-                }
-                if (!st.empty())
-                {
-                    cur = st.top()->right_;
-                    op(st.top());
-                    st.pop();
-                }
-            }
-        }
-        template <typename Op>
-        void post_order_impl_iter(tree_node *rt, Op &op) // 迭代版后序遍历实现
-        {
-            stack<tree_node *> st;
-            tree_node *cur = rt;
-            tree_node *last = nullptr;
-            while (cur || !st.empty())
-            {
-                while (cur)
-                {
-                    st.push(cur);
-                    cur = cur->left_;
-                }
-                if (!st.empty())
-                {
-                    cur = st.top();
-                    if (cur->right_ && cur->right_ != last)
-                    {
-                        cur = cur->right_;
-                    }
-                    else
-                    {
-                        last = cur;
-                        op(cur);
-                        st.pop();
-                        cur = nullptr;
-                    }
-                }
-            }
-        }
-#pragma endregion
-
-#pragma region const遍历实现
-        template <typename Op>
-        void pre_order_impl_recursion(const tree_node *rt, Op &op) const // 递归版先序遍历实现
-        {
-            if (!rt)
-            {
-                return;
-            }
-            op(rt);
-            pre_order_impl_recursion(rt->left_, op);
-            pre_order_impl_recursion(rt->right_, op);
-        }
-        template <typename Op>
-        void in_order_impl_recursion(const tree_node *rt, Op &op) const // 递归版中序遍历实现
-        {
-            if (!rt)
-            {
-                return;
-            }
-            in_order_impl_recursion(rt->left_, op);
-            op(rt);
-            in_order_impl_recursion(rt->right_, op);
-        }
-        template <typename Op>
-        void post_order_impl_recursion(const tree_node *rt, Op &op) const // 递归版后序遍历实现
-        {
-            if (!rt)
-            {
-                return;
-            }
-            post_order_impl_recursion(rt->left_, op);
-            post_order_impl_recursion(rt->right_, op);
-            op(rt);
-        }
-
-        template <typename Op>
-        void level_order_impl(const tree_node *rt, Op &op) const // 层序遍历，使用队列
-        {
-            if (!rt)
-            {
-                return;
-            }
-            queue<const tree_node *> q;
-            q.push(rt);
-            while (q.size())
-            {
-                auto tmp = q.front();
-                op(tmp);
-                if (tmp->left_)
-                {
-                    q.push(tmp->left_);
-                }
-                if (tmp->right_)
-                {
-                    q.push(tmp->right_);
-                }
-                q.pop();
-            }
-        }
-
-        template <typename Op>
-        void pre_order_impl_iter(const tree_node *rt, Op &op) const // 迭代版本先序遍历实现
-        {
-            stack<const tree_node *> st;
-            const tree_node *cur = rt;
-            while (cur || !st.empty())
-            {
-                while (cur)
-                {
-                    if (cur->right_)
-                    {
-                        st.push(cur->right_);
-                    }
-                    op(cur);
-                    cur = cur->left_;
-                }
-                if (!st.empty())
-                {
-                    cur = st.top();
-                    st.pop();
-                }
-            }
-        }
-        template <typename Op>
-        void in_order_impl_iter(const tree_node *rt, Op &op) const // 迭代版本中序遍历实现
-        {
-            stack<const tree_node *> st;
-            const tree_node *cur = rt;
-            while (cur || !st.empty())
-            {
-                while (cur)
-                {
-                    st.push(cur);
-                    cur = cur->left_;
-                }
-                if (!st.empty())
-                {
-                    cur = st.top()->right_;
-                    op(st.top());
-                    st.pop();
-                }
-            }
-        }
-        template <typename Op>
-        void post_order_impl_iter(const tree_node *rt, Op &op) const // 迭代版后序遍历实现
-        {
-            stack<const tree_node *> st;
-            const tree_node *cur = rt;
-            const tree_node *last = nullptr;
-            while (cur || !st.empty())
-            {
-                while (cur)
-                {
-                    st.push(cur);
-                    cur = cur->left_;
-                }
-                if (!st.empty())
-                {
-                    cur = st.top();
-                    if (cur->right_ && cur->right_ != last)
-                    {
-                        cur = cur->right_;
-                    }
-                    else
-                    {
-                        last = cur;
-                        op(cur);
-                        st.pop();
-                        cur = nullptr;
-                    }
-                }
-            }
-        }
-#pragma endregion
 
         void destroy() // 后序，迭代地析构所有节点
         {
@@ -365,12 +94,6 @@ namespace gyx
         }
 
     public:
-        struct recursive_t // 递归标签
-        {
-        }; // 使用递归方式
-        struct iterative_t // 迭代标签
-        {
-        }; // 使用迭代方式
         struct construct_from_input_t // int版本特殊构造，用于实验8要求
         {
         };
@@ -385,6 +108,7 @@ namespace gyx
             if (this != &other)
             {
                 swap(root_, other.root_);
+                // 如果单纯拷贝/移动指针，this原有的树会泄露。因此通过swap转移到other，跟随other正常销毁
             }
             return *this;
         }
