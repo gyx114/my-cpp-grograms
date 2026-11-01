@@ -265,6 +265,7 @@ namespace gyx
                 if (!prev)
                 {
                     root_ = cur_subtree_left ? cur->left_ : cur->right_;
+                    root_->parent_ = nullptr;
                     delete cur;
                     return;
                 }
@@ -276,10 +277,12 @@ namespace gyx
                 if (cur_is_on_left)
                 {
                     prev->left_ = cur_subtree_left ? cur->left_ : cur->right_;
+                    prev->left_->parent_ = prev;
                 }
                 else
                 {
                     prev->right_ = cur_subtree_left ? cur->left_ : cur->right_;
+                    prev->right_->parent_ = prev;
                 }
                 delete cur;
             }
@@ -316,8 +319,6 @@ namespace gyx
                         prev->right_ = new_node_to_replace;
                     }
                 }
-                delete cur;
-
                 // 让cur的孩子们连接新节点，让cur彻底被替代
                 if (cur->left_)
                 {
@@ -327,6 +328,9 @@ namespace gyx
                 {
                     cur->right_->parent_ = new_node_to_replace;
                 }
+
+                // 此时，cur彻底被替代，可以删了
+                delete cur;
 
                 // 至此，我们用新节点把cur给替换了。下一步就是删除左子树最大节点
                 // 递归调用，删除左子树最大节点
@@ -355,6 +359,14 @@ namespace gyx
         {
             size_t leftsize = l.size();
             root_ = new tree_node(val, nullptr, leftsize, l.root_, r.root_);
+            if (root_->left_)
+            {
+                root_->left_->parent_ = root_;
+            }
+            if (root_->right_)
+            {
+                root_->right_->parent_ = root_;
+            }
             l.root_ = nullptr;
             r.root_ = nullptr;
         }
@@ -362,6 +374,14 @@ namespace gyx
         {
             size_t leftsize = l.size();
             root_ = new tree_node(move(val), nullptr, leftsize, l.root_, r.root_);
+            if (root_->left_)
+            {
+                root_->left_->parent_ = root_;
+            }
+            if (root_->right_)
+            {
+                root_->right_->parent_ = root_;
+            }
             l.root_ = nullptr;
             r.root_ = nullptr;
         }
