@@ -21,21 +21,23 @@ namespace gyx
             friend class BST;
 
         private:
-            T val_;
-            size_t lft_sz_;
-            tree_node *left_;
-            tree_node *right_;
+            T val_;             // 值
+            tree_node *parent_; // 父节点(根节点为nullptr)
+            size_t lft_sz_;     // 左子树节点数
+            tree_node *left_;   // 左孩子
+            tree_node *right_;  // 右孩子
 
         public:
-            explicit tree_node(const T &v, size_t left_size = 0, tree_node *l = nullptr, tree_node *r = nullptr) : val_(v), lft_sz_(left_size), left_(l), right_(r) {}
-            explicit tree_node(T &&v, size_t left_size = 0, tree_node *l = nullptr, tree_node *r = nullptr) : val_(move(v)), lft_sz_(left_size), left_(l), right_(r) {}
+            explicit tree_node(const T &v, tree_node *p = nullptr, size_t left_size = 0, tree_node *l = nullptr, tree_node *r = nullptr) : val_(v), parent_(p), lft_sz_(left_size), left_(l), right_(r) {}
+            explicit tree_node(T &&v, tree_node *p = nullptr, size_t left_size = 0, tree_node *l = nullptr, tree_node *r = nullptr) : val_(move(v)), parent_(p), lft_sz_(left_size), left_(l), right_(r) {}
             ~tree_node() {}
 
             tree_node(const tree_node &other) = default;
-            tree_node(tree_node &&other) noexcept : val_(move(other.val_)), lft_sz_(other.lft_sz_), left_(other.left_), right_(other.right_)
+            tree_node(tree_node &&other) noexcept : val_(move(other.val_)), parent_(other.parent_), lft_sz_(other.lft_sz_), left_(other.left_), right_(other.right_)
             {
                 other.left_ = nullptr;
                 other.right_ = nullptr;
+                other.parent_ = nullptr;
                 other.lft_sz_ = 0;
             }
 
@@ -46,11 +48,13 @@ namespace gyx
                 if (this != &other)
                 {
                     val_ = move(other.val_);
+                    parent_ = other.parent_;
                     lft_sz_ = other.lft_sz_;
                     left_ = other.left_;
                     right_ = other.right_;
                     other.left_ = nullptr;
                     other.right_ = nullptr;
+                    other.parent_ = nullptr;
                     other.lft_sz_ = 0;
                 }
                 return *this;
@@ -63,6 +67,8 @@ namespace gyx
             tree_node *right() { return right_; }
             const tree_node *left() const { return left_; }
             const tree_node *right() const { return right_; }
+            tree_node *parent() { return parent_; }
+            const tree_node *parent() const { return parent_; }
         };
 
     private:
@@ -86,7 +92,7 @@ namespace gyx
 
         template <typename U = T, typename std::enable_if<std::is_same<U, int>::value, int>::type = 0>
         pair<tree_node *, tree_node *> find_val_impl(const T &val, bool is_testing) // 如果是实验使用，第二个参数应为true
-        {                                                                           // 返回pair<prev,cur>找到cur应不为空
+        {                                                                           // 返回pair<prev,cur>,找到cur应不为空
             int xor_sum = 0;
             tree_node *prev = nullptr;
             tree_node *cur = root_;
@@ -198,6 +204,28 @@ namespace gyx
             return pair<tree_node *, tree_node *>(prev, cur);
         }
 
+        void maintain_lft_sz(tree_node *cur, bool add_or_sub) // 维护cur的祖先的lft_sz,第二个参数如果为true则+1，否则-1
+        {
+            tree_node *tmp = cur->parent_;
+            bool from_lft = ((tmp) && (tmp->left_ == cur));
+            while (tmp)
+            {
+                if (from_lft)
+                {
+                    if (add_or_sub)
+                    {
+                        tmp->lft_sz_++;
+                    }
+                    else
+                    {
+                        tmp->lft_sz_--;
+                    }
+                }
+                from_lft = ((tmp->parent_) && (tmp->parent_->left_ == tmp));
+                tmp = tmp->parent_;
+            }
+        }
+
         void erase_pointer_impl(tree_node *prev, tree_node *cur)
         {
             if (!cur)
@@ -215,12 +243,15 @@ namespace gyx
                     root_ = nullptr;
                     return;
                 }
+
+                // 向上维护lft_sz
+                maintain_lft_sz(cur, false);
+
                 bool cur_is_on_left = prev->left_ == cur;
                 delete cur;
                 if (cur_is_on_left)
                 {
                     prev->left_ = nullptr;
-                    prev->lft_sz_--;
                 }
                 else
                 {
@@ -237,11 +268,14 @@ namespace gyx
                     delete cur;
                     return;
                 }
+
+                // 维护lft_sz
+                maintain_lft_sz(cur, false);
+
                 bool cur_is_on_left = prev->left_ == cur; // cur在prev的左还是右
                 if (cur_is_on_left)
                 {
                     prev->left_ = cur_subtree_left ? cur->left_ : cur->right_;
-                    prev->lft_sz_--;
                 }
                 else
                 {
@@ -253,11 +287,9 @@ namespace gyx
             else // 左右子树都有,用左子树最大节点来顶替
             {
                 // 找左子树最大值
-                tree_node *lft_child_max_prev = cur;
                 tree_node *lft_child_max = cur->left_;
                 while (lft_child_max->right_)
                 {
-                    lft_child_max_prev = lft_child_max;
                     lft_child_max = lft_child_max->right_;
                 }
 
@@ -266,7 +298,7 @@ namespace gyx
                 // K是const的，swap时尝试移动/拷贝赋值都会报错
                 // 所以，更通用的做法是把 "对cur赋值" 变成 "新建一个节点来顶替cur"
 
-                tree_node *new_node_to_replace = new tree_node(lft_child_max->val_, cur->lft_sz_, cur->left_, cur->right_); // 新建替代节点
+                tree_node *new_node_to_replace = new tree_node(lft_child_max->val_, prev, cur->lft_sz_, cur->left_, cur->right_); // 新建替代节点
 
                 // 让cur的父节点连接替代节点，断掉cur和prev的联系
                 if (!prev)
@@ -285,16 +317,20 @@ namespace gyx
                     }
                 }
                 delete cur;
-                // 至此，我们用新节点把cur给替换了。下一步就是删除左子树最大节点
-                // 但是要注意，当cur的左孩子没有右子树时，左子树最大节点就是左孩子，此时lft_child_max_prev是cur
-                // 但是原来的cur已被新节点所替代，因此应该把lft_child_max_prev修正成新节点
-                if (lft_child_max_prev == cur)
+
+                // 让cur的孩子们连接新节点，让cur彻底被替代
+                if (cur->left_)
                 {
-                    lft_child_max_prev = new_node_to_replace;
+                    cur->left_->parent_ = new_node_to_replace;
+                }
+                if (cur->right_)
+                {
+                    cur->right_->parent_ = new_node_to_replace;
                 }
 
+                // 至此，我们用新节点把cur给替换了。下一步就是删除左子树最大节点
                 // 递归调用，删除左子树最大节点
-                erase_pointer_impl(lft_child_max_prev, lft_child_max);
+                erase_pointer_impl(lft_child_max->parent_, lft_child_max);
             }
         }
 
@@ -315,15 +351,17 @@ namespace gyx
             return *this;
         }
 
-        BST(const T &val, size_t leftsize, BST &&l, BST &&r, Cmp cmp_ = {}) : cmp(cmp_) // 左右子树构造，只接受右值
+        BST(const T &val, BST &&l, BST &&r, Cmp cmp_ = {}) : cmp(cmp_) // 左右子树构造，只接受右值
         {
-            root_ = new tree_node(val, leftsize, l.root_, r.root_);
+            size_t leftsize = l.size();
+            root_ = new tree_node(val, nullptr, leftsize, l.root_, r.root_);
             l.root_ = nullptr;
             r.root_ = nullptr;
         }
-        BST(T &&val, size_t leftsize, BST &&l, BST &&r, Cmp cmp_ = {}) : cmp(cmp_) // 左右子树构造
+        BST(T &&val, BST &&l, BST &&r, Cmp cmp_ = {}) : cmp(cmp_) // 左右子树构造
         {
-            root_ = new tree_node(move(val), leftsize, l.root_, r.root_);
+            size_t leftsize = l.size();
+            root_ = new tree_node(move(val), nullptr, leftsize, l.root_, r.root_);
             l.root_ = nullptr;
             r.root_ = nullptr;
         }
@@ -417,49 +455,33 @@ namespace gyx
 
             auto [prev, cur] = find_val_impl(val, is_testing);
 
-            if (cur)
-            { // 已存在
+            if (cur) // 已存在
+            {
                 return pair<tree_node *, bool>(cur, false);
             }
 
             if (cmp(prev->val_, val))
             {
-                prev->right_ = new tree_node(val);
+                cur = prev->right_ = new tree_node(val, prev);
             }
             else
             {
-                prev->left_ = new tree_node(val);
+                cur = prev->left_ = new tree_node(val, prev);
             }
 
-            prev = nullptr;
-            cur = root_;
-            while (cur) // 再跑一趟，修正left_size
-            {
-                if (cmp(cur->val_, val))
-                {
-                    prev = cur;
-                    cur = cur->right_;
-                }
-                else if (cmp(val, cur->val_))
-                {
-                    prev = cur;
-                    cur->lft_sz_++;
-                    cur = cur->left_;
-                }
-                else
-                {
-                    break;
-                }
-            }
+            // 向上修正lft_sz
+            maintain_lft_sz(cur, true);
 
             return pair<tree_node *, bool>(cur, true);
         }
 
+        template <typename U = T, typename std::enable_if<std::is_same<U, int>::value, int>::type = 0>
         tree_node *find(const T &val, bool is_testing) // 如果是实验使用，第二个参数应为true
         {
             return find_val_impl(val, is_testing).second;
         }
 
+        template <typename U = T, typename std::enable_if<std::is_same<U, int>::value, int>::type = 0>
         bool erase(const T &val, bool is_testing) // 如果是实验使用，第二个参数应为true
         {
             auto [prev, cur] = find_val_impl(val, is_testing);
@@ -467,11 +489,13 @@ namespace gyx
             return cur;
         }
 
+        template <typename U = T, typename std::enable_if<std::is_same<U, int>::value, int>::type = 0>
         tree_node *find_idx(size_t idx, bool is_testing) // 如果是实验使用，第二个参数应为true
         {
             return find_idx_impl(idx, is_testing).second;
         }
 
+        template <typename U = T, typename std::enable_if<std::is_same<U, int>::value, int>::type = 0>
         bool erase_idx(size_t idx, bool is_testing) // 如果是实验使用，第二个参数应为true
         {
             auto [prev, cur] = find_idx_impl(idx, is_testing);
@@ -489,40 +513,22 @@ namespace gyx
 
             auto [prev, cur] = find_val_impl(val);
 
-            if (cur)
-            { // 已存在
+            if (cur) // 已存在
+            {
                 return pair<tree_node *, bool>(cur, false);
             }
 
             if (cmp(prev->val_, val))
             {
-                prev->right_ = new tree_node(val);
+                cur = prev->right_ = new tree_node(val, prev);
             }
             else
             {
-                prev->left_ = new tree_node(val);
+                cur = prev->left_ = new tree_node(val, prev);
             }
 
-            prev = nullptr;
-            cur = root_;
-            while (cur) // 再跑一趟，修正left_size
-            {
-                if (cmp(cur->val_, val))
-                {
-                    prev = cur;
-                    cur = cur->right_;
-                }
-                else if (cmp(val, cur->val_))
-                {
-                    prev = cur;
-                    cur->lft_sz_++;
-                    cur = cur->left_;
-                }
-                else
-                {
-                    break;
-                }
-            }
+            // 向上修正lft_sz
+            maintain_lft_sz(cur, true);
 
             return pair<tree_node *, bool>(cur, true);
         }
