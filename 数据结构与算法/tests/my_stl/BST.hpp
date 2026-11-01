@@ -215,7 +215,7 @@ namespace gyx
                     root_ = nullptr;
                     return;
                 }
-                bool cur_is_on_left = cmp(cur->val_, prev->val_);
+                bool cur_is_on_left = prev->left_ == cur;
                 delete cur;
                 if (cur_is_on_left)
                 {
@@ -237,7 +237,7 @@ namespace gyx
                     delete cur;
                     return;
                 }
-                bool cur_is_on_left = cmp(cur->val_, prev->val_); // cur在prev的左还是右
+                bool cur_is_on_left = prev->left_ == cur; // cur在prev的左还是右
                 if (cur_is_on_left)
                 {
                     prev->left_ = cur_subtree_left ? cur->left_ : cur->right_;
@@ -275,7 +275,7 @@ namespace gyx
                 }
                 else
                 {
-                    if (cmp(cur->val_, prev->val_))
+                    if (prev->left_ == cur)
                     {
                         prev->left_ = new_node_to_replace;
                     }
@@ -300,7 +300,7 @@ namespace gyx
 
     public:
         BST() : root_(nullptr), cmp(Cmp{}) {} // 空树
-        explicit BST(Cmp cmp_) : cmp(move(cmp_)) {}
+        explicit BST(Cmp cmp_) : root_(nullptr), cmp(move(cmp_)) {}
         BST(const BST &other) = delete;
         BST &operator=(const BST &other) = delete;
 

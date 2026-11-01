@@ -11,7 +11,8 @@ using namespace gyx;
 
 void one_op(BST<int> &bst)
 {
-    int a, b;
+    int a;
+    size_t b;
     std::cin >> a >> b;
     switch (a)
     {

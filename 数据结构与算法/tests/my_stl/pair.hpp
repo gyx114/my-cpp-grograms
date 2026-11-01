@@ -1,6 +1,7 @@
 #ifndef GYX_MY_STL_PAIR_HPP
 #define GYX_MY_STL_PAIR_HPP
 
+#include "utility.hpp"
 namespace gyx
 {
     template <typename T, typename U>
@@ -38,12 +39,12 @@ namespace gyx
         template <typename X, typename Y>
         pair(const X &x, const Y &y) : first(x), second(y) {}
 
-        constexpr bool operator==(const pair &other)
+        bool operator==(const pair &other) const
         {
             return first == other.first && second == other.second;
         }
 
-        constexpr bool operator<(const pair &other)
+        bool operator<(const pair &other) const
         {
             return (first < other.first) || (first == other.first && second < other.second);
         }
