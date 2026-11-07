@@ -665,6 +665,14 @@ namespace gyx
             }
             return last;
         }
+
+        void reverse()
+        {
+            for (size_type i = 0; i < size_ / 2; i++)
+            {
+                gyx::swap(*(begin() + i), *(end() - 1 - i));
+            }
+        }
     };
 
     template <typename T>
