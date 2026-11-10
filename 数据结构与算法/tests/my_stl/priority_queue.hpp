@@ -88,7 +88,7 @@ namespace gyx
 
         priority_queue(const priority_queue &other) : data_(other.data_), cmp(other.cmp) {}
         priority_queue(priority_queue &&other) noexcept : data_(move(other.data_)), cmp(move(other.cmp)) {}
-        operator=(const priority_queue & other)
+        priority_queue &operator=(const priority_queue &other)
         {
             if (this != &other)
             {
@@ -97,7 +97,7 @@ namespace gyx
             }
             return *this;
         }
-        operator=(priority_queue && other) noexcept
+        priority_queue &operator=(priority_queue &&other) noexcept
         {
             if (this != &other)
             {

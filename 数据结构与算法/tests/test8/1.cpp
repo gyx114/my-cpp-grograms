@@ -7,6 +7,22 @@ int main()
     int n;
     std::cin >> n;
     binary_tree<int> bt(n, binary_tree<int>::construct_from_input_t{}); // 用int版的专属构造
+
+    // 先序遍历
+    bt.pre_order([](binary_tree<int>::tree_node *nd) -> void
+                 { std::cout << nd->value() << " "; });
+    std::cout << "\n";
+
+    // 中序遍历
+    bt.in_order([](binary_tree<int>::tree_node *nd) -> void
+                { std::cout << nd->value() << " "; });
+    std::cout << "\n";
+
+    // 后序遍历
+    bt.post_order([](binary_tree<int>::tree_node *nd) -> void
+                  { std::cout << nd->value() << " "; });
+    std::cout << "\n";
+
     // 层序遍历
     bt.level_order([](binary_tree<int>::tree_node *nd) -> void
                    { std::cout << nd->value() << " "; });
