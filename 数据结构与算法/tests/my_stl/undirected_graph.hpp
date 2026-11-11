@@ -190,11 +190,9 @@ namespace gyx
                 if (!visited[i - 1])
                 {
                     cnt++;
-                    auto seq = dfs(i, NaturalOrder{});
-                    for (auto x : seq)
-                    {
-                        visited[x - 1] = true;
-                    }
+                    vector<size_t> seq;
+                    seq.reserve(n_);
+                    dfs_impl(i, seq, NaturalOrder{}, visited); // 复用visited，并且遍历时还会顺手置true
                 }
             }
             return cnt;
@@ -209,11 +207,9 @@ namespace gyx
                 if (!visited[i - 1])
                 {
                     ret.push_back(i);
-                    auto seq = dfs(i, NaturalOrder{});
-                    for (auto x : seq)
-                    {
-                        visited[x - 1] = true;
-                    }
+                    vector<size_t> seq;
+                    seq.reserve(n_);
+                    dfs_impl(i, seq, NaturalOrder{}, visited); // 复用visited，并且遍历时还会顺手置true
                 }
             }
             return ret;

@@ -61,15 +61,11 @@ int main()
     }
     std::cout << '\n';
 
-    // 求s到t最短路径
+    // 求s到t最短路径长度，不存在则输出-1
     auto v4 = g.min_path(s, t);
     if (v4.size())
     {
-        for (auto i : v4)
-        {
-            std::cout << i << ' ';
-        }
-        std::cout << '\n';
+        std::cout << v4.size() - 1 << '\n';
     }
     else
     {
