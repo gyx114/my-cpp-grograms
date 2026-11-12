@@ -253,6 +253,11 @@ namespace gyx
             }
             return ret;
         }
+
+        const list<edge> &edges(size_t v) const
+        {
+            return adj_[v - 1];
+        }
     };
 } // namespace gyx
 
